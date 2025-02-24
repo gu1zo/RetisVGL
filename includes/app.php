@@ -19,9 +19,11 @@ Database::config(
 
 
 define('URL', getenv('URL'));
+define('EMAIL_IMG', getenv('EMAIL_IMG'));
 
 View::init([
     'URL' => URL,
+    'EMAIL_IMG' => EMAIL_IMG
 ]);
 
 //Mapeamento de middlewares
