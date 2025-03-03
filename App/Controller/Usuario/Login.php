@@ -116,7 +116,7 @@ class Login extends Page
                 return Alert::getSuccess('O E-mail para redefinição de senha foi enviado!');
                 break;
             case 'password-changed':
-                return Alert::getSuccess('A senha foir trocada com sucesso!');
+                return Alert::getSuccess('A senha foi trocada com sucesso!');
                 break;
             case 'no-email':
                 return Alert::getError('Nenhum usuário encontrado');
@@ -159,13 +159,20 @@ class Login extends Page
     public static function setRecuperar($request)
     {
         $postVars = $request->getPostVars();
+        $queryParams = $request->getQueryParams();
+        $token = $queryParams['token'];
+        $tokenHash = hash('sha256', $token);
         $senha = $postVars['senha'] ?? '';
         $id = $postVars['id'];
 
         $obUser = EntityUser::getUserById($id);
-
         if (!$obUser instanceof EntityUser) {
-            $request->getRouter()->redirect('recuperar-senha?status=invalid-token');
+            $request->getRouter()->redirect('/recuperar-senha?status=invalid-token');
+            exit;
+        }
+
+        if (!hash_equals($obUser->recovery_token, $tokenHash)) {
+            $request->getRouter()->redirect('/recuperar-senha?status=invalid-token');
             exit;
         }
 
