@@ -6,6 +6,7 @@ use \App\Controller\Pages\Page;
 use \App\Utils\View;
 use \App\Utils\Alert;
 use \App\Model\Entity\Cidades as EntityCidades;
+use \App\Model\Entity\Massivas as EntityMassiva;
 
 class Massiva extends Page
 {
@@ -65,5 +66,31 @@ class Massiva extends Page
                 break;
         }
         return '';
+    }
+
+    public static function getAfetados($request)
+    {
+        $content = View::render('/massiva/table', [
+            'status' => self::getStatus($request),
+            'itens' => self::getAfetadosItens()
+        ]);
+        return parent::getPage("Afetados Massiva > RetisVGL", $content);
+    }
+
+    private static function getAfetadosItens()
+    {
+        $itens = '';
+
+        $results = EntityMassiva::getMassivas(null, 'id ASC');
+        while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
+            $itens .= View::render('/massiva/item', [
+                'nome' => $obMassiva->nome,
+                'cpf_cnpj' => $obMassiva->cpf_cnpj,
+                'protocolo' => $obMassiva->protocolo_sz,
+                'numero' => $obMassiva->numero
+            ]);
+        }
+
+        return $itens;
     }
 }

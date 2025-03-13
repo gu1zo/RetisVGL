@@ -21,3 +21,12 @@ $obRouter->post('/cidades', [
         return new Response(200, Massiva::setCidades($request));
     }
 ]);
+
+$obRouter->get('/massiva', [
+    'middlewares' => [
+        'required-login'
+    ],
+    function ($request) {
+        return new Response(200, Massiva::getAfetados($request));
+    }
+]);

@@ -5,7 +5,7 @@ namespace App\Controller\Api;
 use App\http\Request;
 use WilliamCosta\DatabaseManager\Pagination;
 use App\Controller\Evento\Evento;
-use App\Model\Entity\Evento as EntityEvento;
+use App\Model\Entity\Massivas as EntityMassiva;
 use App\Model\Entity\Joins as EntityJoins;
 use App\Model\Entity\Cidades as EntityCidades;
 use App\Utils\DateManipulation;
@@ -136,6 +136,45 @@ class Api
             } else {
                 throw new Exception("Nenhuma cidade informada");
             }
+        } catch (Exception $e) {
+            $data = [
+                'erro' => true,
+                'message' => $e->getMessage()
+            ];
+        }
+        return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+
+
+    public static function setAfetado($request)
+    {
+        $postVars = $request->getPostVars();
+        try {
+            $nome = $postVars['nome'] ?? throw new Exception('Nome não definido');
+            $codsercli = $postVars['codsercli'] ?? throw new Exception('CODSERCLI não definido');
+            $cpf_cnpj = $postVars['cpf_cnpj'] ?? throw new Exception('CPF/CNPJ não definido');
+            $protocolo = $postVars['protocolo'] ?? throw new Exception('Protocolo não definido');
+            $numero = $postVars['numero'] ?? throw new Exception('Número não definido');
+
+            $obMassiva = EntityMassiva::getMassivaByNumber($numero);
+
+            if ($obMassiva instanceof EntityMassiva) {
+                throw new Exception("Afetado já cadastrado");
+            }
+
+            $obMassiva = new EntityMassiva;
+
+            $obMassiva->nome = $nome;
+            $obMassiva->codsercli = $codsercli;
+            $obMassiva->cpf_cnpj = $cpf_cnpj;
+            $obMassiva->protocolo_sz = $protocolo;
+            $obMassiva->numero = $numero;
+            $obMassiva->cadastrar();
+
+            $data = [
+                'error' => false,
+                'message' => "Cadastrado com sucesso"
+            ];
         } catch (Exception $e) {
             $data = [
                 'erro' => true,

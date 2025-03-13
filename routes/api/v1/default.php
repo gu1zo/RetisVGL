@@ -27,3 +27,12 @@ $obRouter->get('/api/v1/getMassiva', [
         return new Response(200, Api\Api::massiva($request), 'application/json');
     }
 ]);
+
+$obRouter->post('/api/v1/setAfetado', [
+    'middlewares' => [
+        'api'
+    ],
+    function ($request) {
+        return new Response(200, Api\Api::setAfetado($request), 'application/json');
+    }
+]);
