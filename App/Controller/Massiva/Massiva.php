@@ -7,6 +7,8 @@ use \App\Utils\View;
 use \App\Utils\Alert;
 use \App\Model\Entity\Cidades as EntityCidades;
 use \App\Model\Entity\Massivas as EntityMassiva;
+use \App\Model\Rest\APIElite;
+use \App\Model\Rest\APIFortics;
 
 class Massiva extends Page
 {
@@ -64,6 +66,9 @@ class Massiva extends Page
             case 'updated':
                 return Alert::getSuccess('Cidades atualizadas com sucesso!');
                 break;
+            case 'documented':
+                return Alert::getSuccess('Chats documentados com sucesso!');
+                break;
         }
         return '';
     }
@@ -92,5 +97,21 @@ class Massiva extends Page
         }
 
         return $itens;
+    }
+
+    public static function documentaChats($request)
+    {
+        $results = EntityMassiva::getMassivas(null, 'id ASC');
+        while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
+            $codoco = APIElite::abreAtendimento($obMassiva->codsercli, $obMassiva->protocolo_sz, $obMassiva->nome, $obMassiva->numero);
+            APIElite::fechaAtendimento($codoco);
+            APIFortics::sendMessage($obMassiva->numero);
+            APIFortics::closeChat($obMassiva->protocolo_sz);
+
+            $obMassiva->excluir();
+        }
+
+        $request->getRouter()->redirect('/massiva?status=documented');
+        exit;
     }
 }

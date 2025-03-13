@@ -89,6 +89,104 @@ class APIElite
         return $instance->makeRequest($data);
     }
 
+    public static function abreAtendimento($codsercli, $protocolo, $nome, $numero)
+    {
+        $instance = new self();
+
+        $dataDeHoje = date("Y-m-d"); // Formato: YYYY-MM-DD
+        $horario = date("H:i:s");
+
+        $codcli = self::getCodcli($codsercli);
+        // Dados do payload
+        $data = [
+            "request" => [
+                "sendRequest" => "integrator.server",
+                "method" => "execute",
+                "submethod" => "datasource.criarAtendimento",
+                "params" => [
+                    "_user" => $instance->user,
+                    "_passwd" => $instance->pass,
+                    "codcli" => $codcli,
+                    "codsercli" => $codsercli,
+                    "codmvis" => "EXML0CYTFZ",
+                    "codocop" => "LIQD0QNZ1G",
+                    "coddep" => "01WX0Y8WCF",
+                    "date" => $dataDeHoje,
+                    "time" => $horario,
+                    "end-date" => $dataDeHoje,
+                    "codusu" => "LQ",
+                    "codcar" => "MF470I0V9X",
+                    "descri_oco" => "Atendimento pelo SZ.CHAT - Protocolo: " . $protocolo . " - Nome: " . $nome . " - Telefone: " . $numero
+                ]
+            ]
+        ];
+
+        $response = $instance->makeRequest($data);
+        return $response[0]["codoco"];
+    }
+
+    public static function fechaAtendimento($codoco)
+    {
+        $instance = new self();
+
+        date_default_timezone_set('America/Sao_Paulo');
+        $dataDeHoje = date("Y-m-d"); // Formato: YYYY-MM-DD
+        $horario = date("H:i:s");
+        // Dados do payload
+        $data = [
+            "request" => [
+                "sendRequest" => "integrator.server",
+                "method" => "datasource",
+                "submethod" => "datasource.fecharAtendimento",
+                "params" => [
+                    "_user" => $instance->user,
+                    "_passwd" => $instance->pass,
+                    "codoco" => $codoco,
+                    "codsto" => "01CONCLUID",
+                    "codvis" => "EXML0CZOSI",
+                    "codocop_sol" => "LIQD0QNZ1G",
+                    "motivo_fechamento" => "LIUP0ZJ57F",
+                    "descri_oco_sol" => "Atendimento realizado pela IA sem passar pelo CSA",
+                    "hora_sol" => $horario,
+                    "data_sol" => $dataDeHoje,
+                    "enviar_email" => "N",
+                    "e_mail_sender" => "financeiro@gegnet.com.br",
+                    "email_resposta" => "suporte@elitesoft.com.br",
+                    "assunto" => "teste",
+                    "conteudo_mail" => "testettt teste",
+                    "codusu" => "LQ"
+                ]
+            ]
+        ];
+
+        $response = $instance->makeRequest($data);
+        return true;
+    }
+
+    private static function getCodcli($codsercli)
+    {
+        $instance = new self();
+
+        // Dados do payload
+        $data = [
+            "request" => [
+                "sendRequest" => "integrator.server",
+                "method" => "list",
+                "submethod" => "datasource.service.status",
+                "params" => [
+                    "_user" => $instance->user,
+                    "_passwd" => $instance->pass,
+                    "codsercli" => $codsercli
+                ]
+            ]
+        ];
+
+        $response = $instance->makeRequest($data);
+
+        return $response[0]['codcli'];
+    }
+
+
     private function makeRequest(array $data)
     {
         // Inicializa o cURL

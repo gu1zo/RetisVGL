@@ -30,3 +30,12 @@ $obRouter->get('/massiva', [
         return new Response(200, Massiva::getAfetados($request));
     }
 ]);
+
+$obRouter->get('/massiva/documentar', [
+    'middlewares' => [
+        'required-login'
+    ],
+    function ($request) {
+        return new Response(200, Massiva::documentaChats($request));
+    }
+]);
