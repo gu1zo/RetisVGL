@@ -108,9 +108,10 @@ class Massiva extends Page
         $results = EntityMassiva::getMassivas(null, 'id ASC');
         $multiHandle = curl_multi_init();
         $curlHandles = [];
+        $token = APIFortics::getToken();
         $mensagem = "A instabilidade na região foi resolvida e o acesso à internet já foi normalizado. Caso sua conexão ainda não tenha sido restabelecida, sugerimos que reinicie seu roteador. Se o problema persistir, entre em contato com nosso suporte para que possamos auxiliar.\n\nAgradecemos sua paciência e compreensão.";
         while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
-            APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles);
+            APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles, $token);
 
             $obFila = new EntityFila;
             $obFila->nome = $obMassiva->nome;
@@ -137,8 +138,10 @@ class Massiva extends Page
         $curlHandles = [];
 
         $results = EntityMassiva::getMassivas(null, 'id ASC');
+        $token = APIFortics::getToken();
+
         while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
-            APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles);
+            APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles, $token);
         }
 
         // Executa todas as requisições ao mesmo tempo

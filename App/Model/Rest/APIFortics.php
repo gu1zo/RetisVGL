@@ -14,7 +14,7 @@ class APIFortics
         $this->pass = getenv('API_PASS_SZ');
     }
 
-    private static function getToken()
+    public static function getToken()
     {
         $instance = new self();
         $url = $instance->url . '/auth/login';
@@ -75,7 +75,7 @@ class APIFortics
         $responseData = json_decode($response, true);
         return $responseData['data'][0]['_id'] ?? 'ID não encontrado';
     }
-    public static function sendMessageAtt($numero, $message, &$multiHandle, &$curlHandles)
+    public static function sendMessageAtt($numero, $message, &$multiHandle, &$curlHandles, $token)
     {
         $instance = new self();
         $data = [
@@ -85,7 +85,6 @@ class APIFortics
             "message" => $message
         ];
         $url = $instance->url . '/message/send';
-        $token = self::getToken();
 
         // Inicializa uma nova requisição cURL
         $ch = curl_init($url);
