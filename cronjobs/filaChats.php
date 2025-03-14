@@ -11,7 +11,7 @@ use DateTimeZone;
 
 $data = new DateTime('now', new DateTimeZone('America/Sao_Paulo'));
 
-$limite = 100;
+$limite = 50;
 
 $results = EntityFila::getMassivas(null, 'id ASC', $limite);
 $qtd = EntityFila::getMassivas(null, 'id ASC', $limite, 'COUNT(*) as qtd')->fetchObject()->qtd;
