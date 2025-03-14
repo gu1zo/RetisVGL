@@ -7,6 +7,7 @@ use \App\Utils\View;
 use \App\Utils\Alert;
 use \App\Model\Entity\Cidades as EntityCidades;
 use \App\Model\Entity\Massivas as EntityMassiva;
+use \App\Model\Entity\Fila as EntityFila;
 use \App\Model\Rest\APIElite;
 use \App\Model\Rest\APIFortics;
 
@@ -103,10 +104,13 @@ class Massiva extends Page
     {
         $results = EntityMassiva::getMassivas(null, 'id ASC');
         while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
-            $codoco = APIElite::abreAtendimento($obMassiva->codsercli, $obMassiva->protocolo_sz, $obMassiva->nome, $obMassiva->numero);
-            APIElite::fechaAtendimento($codoco);
-            APIFortics::sendMessage($obMassiva->numero);
-            APIFortics::closeChat($obMassiva->protocolo_sz);
+            $obFila = new EntityFila;
+            $obFila->nome = $obMassiva->nome;
+            $obFila->codsercli = $obMassiva->codsercli;
+            $obFila->cpf_cnpj = $obMassiva->cpf_cnpj;
+            $obFila->protocolo_sz = $obMassiva->protocolo_sz;
+            $obFila->numero = $obMassiva->numero;
+            $obFila->cadastrar();
 
             $obMassiva->excluir();
         }
