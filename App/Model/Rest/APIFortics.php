@@ -41,21 +41,6 @@ class APIFortics
         curl_close($ch);
         return $token;
     }
-
-
-    public static function sendMessage($numero)
-    {
-        $instance = new self();
-        $data = [
-            "platform_id" => $numero,
-            "type" => "text",
-            "channel_id" => "647f2d69971cd900180bbd8c",
-            "message" => "A instabilidade na região foi resolvida e o acesso à internet já foi normalizado. Caso sua conexão ainda não tenha sido restabelecida, sugerimos que reinicie seu roteador. Se o problema persistir, entre em contato com nosso suporte para que possamos auxiliar.\n\nAgradecemos sua paciência e compreensão."
-        ];
-        $url = $instance->url . '/message/send';
-        $instance->makeRequest($data, $url);
-        return true;
-    }
     public static function closeChat($protocolo)
     {
         $instance = new self();
@@ -90,6 +75,59 @@ class APIFortics
         $responseData = json_decode($response, true);
         return $responseData['data'][0]['_id'] ?? 'ID não encontrado';
     }
+    public static function sendMessageAtt($numero, $message, &$multiHandle, &$curlHandles)
+    {
+        $instance = new self();
+        $data = [
+            "platform_id" => $numero,
+            "type" => "text",
+            "channel_id" => "647f2d69971cd900180bbd8c",
+            "message" => $message
+        ];
+        $url = $instance->url . '/message/send';
+        $token = self::getToken();
+
+        // Inicializa uma nova requisição cURL
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'User-Agent: APIElite/1.0',
+            'Authorization: Bearer ' . $token
+        ]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+
+        // Adiciona ao Multi cURL
+        curl_multi_add_handle($multiHandle, $ch);
+        $curlHandles[] = $ch;
+    }
+
+    // Nova função para executar todas as requisições
+    public static function executeBatchRequests(&$multiHandle, &$curlHandles)
+    {
+        if ($multiHandle === null || empty($curlHandles)) {
+            return;
+        }
+
+        // Executa todas as requisições em paralelo
+        do {
+            $status = curl_multi_exec($multiHandle, $active);
+        } while ($active && $status == CURLM_OK);
+
+        // Fecha e remove as conexões
+        foreach ($curlHandles as $ch) {
+            curl_multi_remove_handle($multiHandle, $ch);
+            curl_close($ch);
+        }
+
+        // Limpa os handlers
+        $curlHandles = [];
+        curl_multi_close($multiHandle);
+        $multiHandle = null;
+    }
+
+
     private function makeRequest(array $data, $url)
     {
         $token = self::getToken();

@@ -39,3 +39,12 @@ $obRouter->get('/massiva/documentar', [
         return new Response(200, Massiva::documentaChats($request));
     }
 ]);
+
+$obRouter->post('/massiva/atualizar', [
+    'middlewares' => [
+        'required-login'
+    ],
+    function ($request) {
+        return new Response(200, Massiva::atualizaChats($request));
+    }
+]);

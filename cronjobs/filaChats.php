@@ -13,12 +13,10 @@ $limite = 50;
 
 $results = EntityFila::getMassivas(null, 'id ASC', $limite);
 $qtd = EntityFila::getMassivas(null, 'id ASC', $limite, 'COUNT(*) as qtd')->fetchObject()->qtd;
-
 if ($qtd > 0) {
     while ($obFila = $results->fetchObject(EntityFila::class)) {
         $codoco = APIElite::abreAtendimento($obFila->codsercli, $obFila->protocolo_sz, $obFila->nome, $obFila->numero);
         APIElite::fechaAtendimento($codoco);
-        APIFortics::sendMessage($obFila->numero);
         APIFortics::closeChat($obFila->protocolo_sz);
 
         $obFila->excluir();

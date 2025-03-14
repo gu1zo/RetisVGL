@@ -24,6 +24,55 @@
         <a class="btn btn-pink mt-3" href="{{URL}}/massiva/documentar"
           >Documentar</a
         >
+        <button
+          type="button"
+          class="shadow btn btn-pink mt-3"
+          data-bs-toggle="modal"
+          data-bs-target="#atualizacao"
+        >
+          Atualizar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  class="modal modal-lg fade"
+  id="atualizacao"
+  tabindex="-1"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5">Atualização</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form action="{{URL}}/massiva/atualizar" method="post">
+          <div class="form-group mb-3 w-75 mx-auto text-center">
+            <label for="comentario" class="form-label">Atualização:</label>
+            <textarea
+              name="mensagem"
+              id="mensagem"
+              class="form-control shadow"
+              placeholder="Escreva aqui a mensagem de atualização"
+              style="min-height: 300px"
+            ></textarea>
+            <button
+              type="submit"
+              class="shadow btn btn-outline-success mt-3"
+              data-bs-toggle="modal"
+              data-bs-target="#atualizacao"
+            >
+              <i class="bi bi-check"></i>Executar
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
