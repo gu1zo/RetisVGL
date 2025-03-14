@@ -125,6 +125,26 @@ class APIFortics
         curl_multi_close($multiHandle);
         $multiHandle = null;
     }
+    public static function getAllMessages()
+    {
+        $instance = new self();
+        $url = $instance->url . '/attendances/phase/human';
+        $token = self::getToken();
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Authorization: Bearer $token",
+            "User-Agent: insomnia/10.3.1"
+        ]);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        $responseData = json_decode($response, true);
+        return $responseData;
+    }
 
 
     private function makeRequest(array $data, $url)
