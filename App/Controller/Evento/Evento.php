@@ -726,11 +726,14 @@ class Evento extends Page
         if ($obEvento->status != 'reagendado') {
             EvolutionAPI::sendMessage(self::getIndividualMessage($obEvento->id, 'reagendar'));
             $obEvento->dataInicio = null;
-            $obManutencao->dataPrevista = null;
+            if ($obEvento->tipo == 'manutencao') {
+                $obManutencao->dataPrevista = null;
+                $obManutencao->atualizar();
+            }
+
             $obEvento->status = 'reagendado';
 
             $obEvento->atualizar();
-            $obManutencao->atualizar();
             self::setAlteracao($obEvento->id, "Evento aguardando reagendamento");
         } else {
             $obEvento->dataInicio = $postVars['horario-inicial'];
