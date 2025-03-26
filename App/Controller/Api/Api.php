@@ -154,7 +154,7 @@ class Api
             $protocolo = $postVars['protocolo'] ?? throw new Exception('Protocolo não definido');
             $numero = $postVars['numero'] ?? throw new Exception('Número não definido');
             $codsercli = $postVars['codsercli'] ?? throw new Exception('Número não definido');
-            $id_massiva = $postVars['id_massiva'] ?? null;
+            $id_massiva = $postVars['id_massiva'] == '' ? null : $postVars['id_massiva'];
 
             $obMassiva = EntityMassiva::getMassivaByNumber($numero);
 
