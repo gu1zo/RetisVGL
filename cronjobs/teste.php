@@ -8,4 +8,4 @@ use \App\Controller\Massiva\Massiva;
 use DateTime;
 use DateTimeZone;
 
-var_dump(APIInt6::verificaMassivaBydId('13058'));
+echo APIInt6::getToken();

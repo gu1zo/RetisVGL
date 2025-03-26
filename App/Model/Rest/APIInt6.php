@@ -14,7 +14,7 @@ class APIInt6
         $this->pass = getenv('API_PASS_INT6');
     }
 
-    private static function getToken()
+    public static function getToken()
     {
         $instance = new self();
         $url = $instance->url . '/api/auth/v2/request_token';
