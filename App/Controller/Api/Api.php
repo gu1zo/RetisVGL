@@ -151,10 +151,10 @@ class Api
         $postVars = $request->getPostVars();
         try {
             $nome = $postVars['nome'] ?? throw new Exception('Nome não definido');
-            $codsercli = $postVars['codsercli'] ?? throw new Exception('CODSERCLI não definido');
-            $cpf_cnpj = $postVars['cpf_cnpj'] ?? throw new Exception('CPF/CNPJ não definido');
             $protocolo = $postVars['protocolo'] ?? throw new Exception('Protocolo não definido');
             $numero = $postVars['numero'] ?? throw new Exception('Número não definido');
+            $codsercli = $postVars['codsercli'] ?? throw new Exception('Número não definido');
+            $id_massiva = $postVars['id_massiva'] ?? null;
 
             $obMassiva = EntityMassiva::getMassivaByNumber($numero);
 
@@ -165,10 +165,10 @@ class Api
             $obMassiva = new EntityMassiva;
 
             $obMassiva->nome = $nome;
-            $obMassiva->codsercli = $codsercli;
-            $obMassiva->cpf_cnpj = $cpf_cnpj;
             $obMassiva->protocolo_sz = $protocolo;
             $obMassiva->numero = $numero;
+            $obMassiva->codsercli = $codsercli;
+            $obMassiva->id_massiva = $id_massiva;
             $obMassiva->cadastrar();
 
             $data = [
@@ -177,7 +177,7 @@ class Api
             ];
         } catch (Exception $e) {
             $data = [
-                'erro' => true,
+                'error' => true,
                 'message' => $e->getMessage()
             ];
         }

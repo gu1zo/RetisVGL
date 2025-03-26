@@ -9,7 +9,6 @@ class Fila
     public $id;
     public $nome;
     public $codsercli;
-    public $cpf_cnpj;
     public $protocolo_sz;
     public $numero;
 
@@ -18,7 +17,6 @@ class Fila
         $this->id = (new Database('fila'))->insert([
             'nome' => $this->nome,
             'codsercli' => $this->codsercli,
-            'cpf_cnpj' => $this->cpf_cnpj,
             'protocolo_sz' => $this->protocolo_sz,
             'numero' => $this->numero,
         ]);

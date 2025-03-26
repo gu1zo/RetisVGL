@@ -9,18 +9,18 @@ class Massivas
     public $id;
     public $nome;
     public $codsercli;
-    public $cpf_cnpj;
     public $protocolo_sz;
     public $numero;
+    public $id_massiva;
 
     public function cadastrar()
     {
         $this->id = (new Database('massivas'))->insert([
-            'nome' => $this->nome,
-            'codsercli' => $this->codsercli,
-            'cpf_cnpj' => $this->cpf_cnpj,
             'protocolo_sz' => $this->protocolo_sz,
             'numero' => $this->numero,
+            'id_massiva' => $this->id_massiva,
+            'nome' => $this->nome,
+            'codsercli' => $this->codsercli
         ]);
 
         return true;
@@ -34,6 +34,10 @@ class Massivas
     public static function getMassivaByNumber($numero)
     {
         return self::getMassivas('numero =' . $numero)->fetchObject(self::class);
+    }
+    public static function getMassivasByIdMassiva($id_massiva)
+    {
+        return self::getMassivas('id_massiva =' . $id_massiva);
     }
     public function excluir()
     {

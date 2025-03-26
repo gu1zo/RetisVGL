@@ -92,11 +92,12 @@ class Massiva extends Page
 
         $results = EntityMassiva::getMassivas(null, 'id ASC');
         while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
+            $id_massiva = is_null($obMassiva->id_massiva) ? 0 : $obMassiva->id_massiva;
             $itens .= View::render('/massiva/item', [
                 'nome' => $obMassiva->nome,
-                'cpf_cnpj' => $obMassiva->cpf_cnpj,
                 'protocolo' => $obMassiva->protocolo_sz,
-                'numero' => $obMassiva->numero
+                'numero' => $obMassiva->numero,
+                'id_massiva' => $id_massiva
             ]);
         }
 
@@ -116,7 +117,6 @@ class Massiva extends Page
             $obFila = new EntityFila;
             $obFila->nome = $obMassiva->nome;
             $obFila->codsercli = $obMassiva->codsercli;
-            $obFila->cpf_cnpj = $obMassiva->cpf_cnpj;
             $obFila->protocolo_sz = $obMassiva->protocolo_sz;
             $obFila->numero = $obMassiva->numero;
             $obFila->cadastrar();
@@ -126,6 +126,29 @@ class Massiva extends Page
         APIFortics::executeBatchRequests($multiHandle, $curlHandles);
         $request->getRouter()->redirect('/massiva?status=documented');
         exit;
+    }
+
+
+    public static function documentaChatsByIdMassiva($id_massiva)
+    {
+        $results = EntityMassiva::getMassivasByIdMassiva($id_massiva);
+        $multiHandle = curl_multi_init();
+        $curlHandles = [];
+        $token = APIFortics::getToken();
+        $mensagem = "A instabilidade na região foi resolvida e o acesso à internet já foi normalizado. Caso sua conexão ainda não tenha sido restabelecida, sugerimos que reinicie seu roteador. Se o problema persistir, entre em contato com nosso suporte para que possamos auxiliar.\n\nAgradecemos sua paciência e compreensão.";
+        while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
+            APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles, $token);
+
+            $obFila = new EntityFila;
+            $obFila->nome = $obMassiva->nome;
+            $obFila->codsercli = $obMassiva->codsercli;
+            $obFila->protocolo_sz = $obMassiva->protocolo_sz;
+            $obFila->numero = $obMassiva->numero;
+            $obFila->cadastrar();
+
+            $obMassiva->excluir();
+        }
+        APIFortics::executeBatchRequests($multiHandle, $curlHandles);
     }
 
     public static function atualizaChats($request)
