@@ -12,7 +12,7 @@ use DateTimeZone;
 $limite = 10;
 
 $results = EntityMassiva::getMassivas('id_massiva is not null', null, $limite, "*", 'id_massiva');
-$qtd = EntityMassiva::getMassivas('id_massiva is not null', null, $limite, 'COUNT(*) as qtd', 'id_massiva')->fetchObject()->qtd;
+$qtd = EntityMassiva::getMassivas('id_massiva is not null', 'id ASC', $limite, 'COUNT(*) as qtd')->fetchObject()->qtd;
 if ($qtd > 0) {
     while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
         if (APIInt6::verificaMassivaBydId((string) $obMassiva->id_massiva)) {
