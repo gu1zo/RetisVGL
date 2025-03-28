@@ -70,8 +70,33 @@ class APIInt6
         $decodedResponse = json_decode($response, true);
         if (!empty($decodedResponse['events'])) {
             return true;
-        }
-        return false;
+        } else {
+            $url = $instance->url . "/api/massives/v1/events?filters=" . urlencode(json_encode([
+                [
+                    "field" => "analytics_event_id",
+                    "op" => "==",
+                    "value" => $id_massiva
+                ],
+                [
+                    "field" => "admin_status",
+                    "op" => "==",
+                    "value" => "false_positive"
+                ]
+            ]));
 
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                "Authorization: Bearer $token"
+            ]);
+
+            $response = curl_exec($ch);
+            $decodedResponse = json_decode($response, true);
+            if (!empty($decodedResponse['events'])) {
+                return true;
+            }
+            return false;
+        }
     }
 }
