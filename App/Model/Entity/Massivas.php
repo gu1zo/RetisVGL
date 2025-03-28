@@ -35,6 +35,10 @@ class Massivas
     {
         return self::getMassivas('numero =' . $numero)->fetchObject(self::class);
     }
+    public static function getMassivasById($id)
+    {
+        return self::getMassivas('id =' . $id)->fetchObject(self::class);
+    }
     public static function getMassivasByIdMassiva($id_massiva)
     {
         return self::getMassivas('id_massiva =' . $id_massiva);

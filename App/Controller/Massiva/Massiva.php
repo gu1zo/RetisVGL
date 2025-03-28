@@ -73,6 +73,9 @@ class Massiva extends Page
             case 'atualizado':
                 return Alert::getSuccess('Chats atualizados com sucesso!');
                 break;
+            case 'deleted':
+                return Alert::getSuccess('Afetado removido com sucesso!');
+                break;
         }
         return '';
     }
@@ -94,6 +97,7 @@ class Massiva extends Page
         while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
             $id_massiva = is_null($obMassiva->id_massiva) ? 0 : $obMassiva->id_massiva;
             $itens .= View::render('/massiva/item', [
+                'id' => $obMassiva->id,
                 'nome' => $obMassiva->nome,
                 'protocolo' => $obMassiva->protocolo_sz,
                 'numero' => $obMassiva->numero,
@@ -175,5 +179,39 @@ class Massiva extends Page
         exit;
     }
 
+    public static function getDeleteAfetado($request)
+    {
+        $queryParams = $request->getQueryParams();
+        $id = $queryParams['id'];
 
+
+        $obMassiva = EntityMassiva::getMassivasById($id);
+
+        if (!$obMassiva instanceof EntityMassiva) {
+            $request->getRouter()->redirect('/massiva');
+            exit;
+        }
+
+        $content = View::render('massiva/delete', [
+            'nome' => $obMassiva->nome,
+        ]);
+
+        //Retorna a página
+        return parent::getPage('Excluir Afetado > RetisVGL', $content);
+    }
+    public static function setDeleteAfetado($request)
+    {
+        $queryParams = $request->getQueryParams();
+        $id = $queryParams['id'];
+        $obMassiva = EntityMassiva::getMassivasById($id);
+
+        if (!$obMassiva instanceof EntityMassiva) {
+            $request->getRouter()->redirect('/massiva');
+            exit;
+        }
+        $obMassiva->excluir();
+
+        $request->getRouter()->redirect('/massiva?status=deleted');
+        exit;
+    }
 }
