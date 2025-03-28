@@ -22,7 +22,7 @@
       <div class="text-center">
         <a class="btn btn-pink mt-3" href="{{URL}}/cidades">Voltar</a>
         <a class="btn btn-pink mt-3" href="{{URL}}/massiva/documentar"
-          >Documentar</a
+          >Fechar Chats</a
         >
         <button
           type="button"
@@ -30,7 +30,7 @@
           data-bs-toggle="modal"
           data-bs-target="#atualizacao"
         >
-          Atualizar
+          Enviar Previsão
         </button>
       </div>
     </div>
@@ -54,6 +54,14 @@
       </div>
       <div class="modal-body">
         <form action="{{URL}}/massiva/atualizar" method="post">
+          <div class="form-group mb-3 w-75 mx-auto text-center">
+            <label class="form-label">Pontos de Acesso</label>
+            <select
+              class="form-select shadow"
+              name="massivas[]"
+              id="massivas"
+            ></select>
+          </div>
           <div class="form-group mb-3 w-75 mx-auto text-center">
             <label for="comentario" class="form-label">Atualização:</label>
             <textarea

@@ -155,18 +155,19 @@ class Massiva extends Page
     {
         $postVars = $request->getPostVars();
         $mensagem = $postVars['mensagem'];
+        $massivas = $postVars['massivas'];
 
         // Inicializa Multi cURL
         $multiHandle = curl_multi_init();
         $curlHandles = [];
-
-        $results = EntityMassiva::getMassivas(null, 'id ASC');
         $token = APIFortics::getToken();
 
-        while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
-            APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles, $token);
+        foreach ($massivas as $k) {
+            $results = EntityMassiva::getMassivasByIdMassiva($k);
+            while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
+                APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles, $token);
+            }
         }
-
         // Executa todas as requisições ao mesmo tempo
         APIFortics::executeBatchRequests($multiHandle, $curlHandles);
 

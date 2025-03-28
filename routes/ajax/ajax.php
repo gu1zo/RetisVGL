@@ -104,4 +104,10 @@ $obRouter->get('/ajax/graficos/heatmap', [
         return new response(200, Graficos::getHeatMap());
     }
 ]);
+
+$obRouter->get('/ajax/massivas', [
+    function ($request) {
+        return new response(200, Ajax::getMassivas($request));
+    }
+]);
 ?>

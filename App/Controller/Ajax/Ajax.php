@@ -2,6 +2,7 @@
 namespace App\Controller\Ajax;
 
 use App\Model\Entity\PontoAcesso as EntityPontoAcesso;
+use App\Model\Entity\Massivas as EntityMassivas;
 use App\Model\Entity\Comentarios as EntityComentarios;
 use App\Model\Entity\Evento as EntityEvento;
 use App\Model\Entity\Alteracoes as EntityAlteracoes;
@@ -242,5 +243,52 @@ class Ajax
             ];
         }
         return json_encode($alteracoes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+    public static function getMassivas($request)
+    {
+        $results = [];
+
+        // Obter os parâmetros da query
+        $queryParams = $request->getQueryParams();
+
+        $paginaAtual = $queryParams['page'] ?? 1;
+        $search = $queryParams['search'] ?? '';
+
+        // Montar o filtro de busca
+        $where = null;
+        if (!empty($search)) {
+            $where = 'id_massiva LIKE "%' . addslashes($search) . '%"';
+        }
+
+        // Obter o total de registros com o filtro
+        $quantidadetotal = EntityMassivas::getMassivas($where, null, null, 'COUNT(*) as qtd')->fetchObject()->qtd;
+
+        // Configuração da paginação
+        $obPagination = new Pagination($quantidadetotal, $paginaAtual, 100);
+
+        // Buscar os registros filtrados
+        $res = EntityMassivas::getMassivas($where, 'nome ASC', $obPagination->getLimit(), '*', 'id_massiva');
+
+        // Construir a lista de resultados
+        while ($obMassiva = $res->fetchObject(EntityMassivas::class)) {
+            $results[] = [
+                'id' => $obMassiva->id_massiva,
+                'text' => $obMassiva->id_massiva
+            ];
+        }
+
+        // Verificar se há mais páginas
+        $hasMore = $paginaAtual * 15 < $quantidadetotal;
+        // Estrutura JSON com resultados e paginação
+        $response = [
+            'results' => $results,
+            'pagination' => [
+                'more' => $hasMore
+            ]
+        ];
+
+
+        // Retornar JSON
+        return json_encode($response);
     }
 }

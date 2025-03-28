@@ -183,6 +183,28 @@ $(document).ready(function () {
     });
     $('#email').next('.select2-container').find('.select2-selection').addClass('shadow');
 });
+$(document).ready(function () {
+  // Inicialização do Select2 com AJAX
+  $("#massivas").select2({
+    ajax: {
+      url: "/ajax/massivas", 
+      dataType: "json",         
+      delay: 250,                
+      data: function (params) {  
+        return {
+          search: params.term,   
+          page: params.page || 1 
+        };
+      },
+    },
+    placeholder: "Selecione uma das Massivas", 
+    multiple: true,        
+    closeOnSelect: false, 
+    theme: "bootstrap-5"   
+  });
+  $('#massivas').next('.select2-container').find('.select2-selection').addClass('shadow');
+});
+
 
 /**
 * DataTable
