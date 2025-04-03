@@ -5,8 +5,8 @@
     </div>
     <div class="card-body">
       {{status}}
-      <form method="post">
-        <table id="table" class="table table-bordered text-center shadow">
+      <form method="post" id="formCidades">
+        <table id="cidades" class="table table-bordered text-center shadow">
           <thead>
             <tr>
               <th scope="col"></th>
@@ -18,6 +18,10 @@
             {{itens}}
           </tbody>
         </table>
+
+        <!-- Campo oculto para armazenar os inputs dinamicamente -->
+        <div id="inputsHidden"></div>
+
         <div class="text-center">
           <button type="submit" class="btn btn-pink mt-3">Salvar</button>
           <a class="btn btn-pink mt-3" href="{{URL}}/massiva">Afetados</a>

@@ -204,6 +204,17 @@ footer {
   text-overflow: ellipsis; /* Adiciona reticências (...) */
   white-space: nowrap; /* Impede quebra de linha */
 }
+#cidades {
+  table-layout: fixed; /* Faz com que todas as larguras sejam respeitadas */
+  width: 100%;
+}
+
+#cidades th:nth-child(1),
+#cidades td:nth-child(1) {
+  overflow: hidden; /* Oculta o conteúdo que exceder */
+  text-overflow: ellipsis; /* Adiciona reticências (...) */
+  white-space: nowrap; /* Impede quebra de linha */
+}
 
 #tableEvento {
     table-layout: fixed; /* Faz com que todas as larguras sejam respeitadas */

@@ -232,6 +232,61 @@ $(document).ready(function () {
       }
   });
 });
+$(document).ready(function () {
+  var selecoes = new Set(); // Armazena os IDs das cidades marcadas
+
+  var tabela = $("#cidades").DataTable({
+      paging: true,
+      searching: true,
+      ordering: true,
+      info: true,
+      autoWidth: false,
+      responsive: true,
+      language: {
+          url: "/resources/json/datatable-pt-br.json"
+      },
+      order: [[2, 'dsc']],
+      columnDefs: [{ width: "8px", targets: 0 }],
+      createdRow: function (row, data, dataIndex) {
+          const status = data.status;
+          $(row).find('td').eq(0).addClass('default');
+      }
+  });
+
+  // Ao carregar a página, marca os checkboxes que já estão no banco
+  $("#cidades tbody input[type='checkbox'][name='massiva[]']").each(function () {
+      if ($(this).is(":checked")) {
+          selecoes.add($(this).val());
+      }
+  });
+
+  // Atualizar os checkboxes ao mudar de página ou usar a barra de pesquisa
+  tabela.on("draw.dt", function () {
+      $("#cidades tbody input[type='checkbox'][name='massiva[]']").each(function () {
+          var id = $(this).val();
+          $(this).prop("checked", selecoes.has(id)); // Mantém a seleção
+      });
+  });
+
+  // Capturar clique nos checkboxes individuais
+  $("#cidades tbody").on("change", 'input[type="checkbox"][name="massiva[]"]', function () {
+      var id = $(this).val();
+      if ($(this).is(":checked")) {
+          selecoes.add(id);
+      } else {
+          selecoes.delete(id);
+      }
+  });
+
+  // Antes de enviar o formulário, cria inputs ocultos com os IDs selecionados
+  $("#formCidades").on("submit", function () {
+      $("#inputsHidden").empty(); // Limpa os inputs ocultos
+      selecoes.forEach(function (id) {
+          $("#inputsHidden").append('<input type="hidden" name="massiva[]" value="' + id + '">');
+      });
+  });
+});
+
 
 
 $(document).ready(function () {
