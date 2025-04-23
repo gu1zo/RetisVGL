@@ -145,6 +145,7 @@ class Massiva extends Page
             $obFila->codsercli = $obMassiva->codsercli;
             $obFila->protocolo_sz = $obMassiva->protocolo_sz;
             $obFila->numero = $obMassiva->numero;
+            $obFila->cpf_cnpj = $obMassiva->cpf_cnpj;
             $obFila->cadastrar();
 
             $obMassiva->excluir();
