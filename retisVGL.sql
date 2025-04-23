@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Tempo de geração: 03/04/2025 às 19:40
+-- Tempo de geração: 23/04/2025 às 14:02
 -- Versão do servidor: 11.6.2-MariaDB-ubu2404
 -- Versão do PHP: 8.2.27
 
@@ -108,12 +108,41 @@ CREATE TABLE `evento_conclusao` (
 -- --------------------------------------------------------
 
 --
+-- Estrutura para tabela `fila`
+--
+
+CREATE TABLE `fila` (
+  `id` int(11) NOT NULL,
+  `nome` varchar(255) NOT NULL,
+  `codsercli` varchar(255) NOT NULL,
+  `protocolo_sz` varchar(255) NOT NULL,
+  `numero` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura para tabela `manutencoes`
 --
 
 CREATE TABLE `manutencoes` (
   `evento_id` int(11) NOT NULL,
   `dataPrevista` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `massivas`
+--
+
+CREATE TABLE `massivas` (
+  `id` int(11) NOT NULL,
+  `protocolo_sz` varchar(255) NOT NULL,
+  `numero` varchar(255) NOT NULL,
+  `id_massiva` int(11) DEFAULT NULL,
+  `codsercli` varchar(255) NOT NULL,
+  `nome` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- --------------------------------------------------------
@@ -220,10 +249,22 @@ ALTER TABLE `evento_conclusao`
   ADD PRIMARY KEY (`evento_id`);
 
 --
+-- Índices de tabela `fila`
+--
+ALTER TABLE `fila`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Índices de tabela `manutencoes`
 --
 ALTER TABLE `manutencoes`
   ADD PRIMARY KEY (`evento_id`);
+
+--
+-- Índices de tabela `massivas`
+--
+ALTER TABLE `massivas`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Índices de tabela `pontos_acesso`
@@ -278,6 +319,18 @@ ALTER TABLE `comentarios`
 -- AUTO_INCREMENT de tabela `eventos`
 --
 ALTER TABLE `eventos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `fila`
+--
+ALTER TABLE `fila`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `massivas`
+--
+ALTER TABLE `massivas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --

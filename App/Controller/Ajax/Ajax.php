@@ -264,7 +264,7 @@ class Ajax
         $quantidadetotal = EntityMassivas::getMassivas($where, null, null, 'COUNT(*) as qtd')->fetchObject()->qtd;
 
         // Configuração da paginação
-        $obPagination = new Pagination($quantidadetotal, $paginaAtual, 100);
+        $obPagination = new Pagination($quantidadetotal, $paginaAtual, 15);
 
         // Buscar os registros filtrados
         $res = EntityMassivas::getMassivas($where, 'nome ASC', $obPagination->getLimit(), '*', 'id_massiva');

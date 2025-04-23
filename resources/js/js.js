@@ -189,7 +189,8 @@ $(document).ready(function () {
     ajax: {
       url: "/ajax/massivas", 
       dataType: "json",         
-      delay: 250,                
+      delay: 250,
+      cache: true,             
       data: function (params) {  
         return {
           search: params.term,   
