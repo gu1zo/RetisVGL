@@ -12,6 +12,7 @@ class Massivas
     public $protocolo_sz;
     public $numero;
     public $id_massiva;
+    public $cpf_cnpj;
 
     public function cadastrar()
     {
@@ -20,6 +21,7 @@ class Massivas
             'numero' => $this->numero,
             'id_massiva' => $this->id_massiva,
             'nome' => $this->nome,
+            'cpf_cnpj' => $this->cpf_cnpj,
             'codsercli' => $this->codsercli
         ]);
 

@@ -19,8 +19,8 @@ class Ajax
 {
     /**
      * Método responsável por retornar os dados para o select2 de pontos de Acesso
-     * @param Request $request
-     * @return json
+     * @param  $request
+     * @return 
      */
     public static function getPontosAcesso($request)
     {
@@ -136,7 +136,7 @@ class Ajax
 
     /**
      * Método responsável por retornar os pontos de acesso selecionados de evento x
-     * @param Request $request
+     * @param  $request
      * @return bool|string
      */
     public static function getPontosAcessoEdit($request)

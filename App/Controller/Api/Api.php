@@ -155,6 +155,7 @@ class Api
             $numero = $postVars['numero'] ?? throw new Exception('Número não definido');
             $codsercli = $postVars['codsercli'] ?? throw new Exception('Número não definido');
             $id_massiva = $postVars['id_massiva'] == 0 ? 0 : $postVars['id_massiva'];
+            $cpf_cnpj = $postVars['cpf_cnpj'] ?? throw new Exception('Documento não definido');
 
             $obMassiva = EntityMassiva::getMassivaByNumber($numero);
 
@@ -169,6 +170,7 @@ class Api
             $obMassiva->numero = $numero;
             $obMassiva->codsercli = $codsercli;
             $obMassiva->id_massiva = $id_massiva;
+            $obMassiva->cpf_cnpj = $cpf_cnpj;
             $obMassiva->cadastrar();
 
             $data = [

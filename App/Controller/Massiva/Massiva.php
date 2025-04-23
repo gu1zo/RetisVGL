@@ -66,16 +66,12 @@ class Massiva extends Page
         switch ($queryParams['status']) {
             case 'updated':
                 return Alert::getSuccess('Cidades atualizadas com sucesso!');
-                break;
             case 'documented':
                 return Alert::getSuccess('Chats documentados com sucesso!');
-                break;
             case 'atualizado':
                 return Alert::getSuccess('Chats atualizados com sucesso!');
-                break;
             case 'deleted':
                 return Alert::getSuccess('Afetado removido com sucesso!');
-                break;
         }
         return '';
     }
@@ -123,6 +119,7 @@ class Massiva extends Page
             $obFila->codsercli = $obMassiva->codsercli;
             $obFila->protocolo_sz = $obMassiva->protocolo_sz;
             $obFila->numero = $obMassiva->numero;
+            $obFila->cpf_cnpj = $obMassiva->cpf_cnpj;
             $obFila->cadastrar();
 
             $obMassiva->excluir();

@@ -89,7 +89,7 @@ class APIElite
         return $instance->makeRequest($data);
     }
 
-    public static function abreAtendimento($codsercli, $protocolo, $nome, $numero)
+    public static function abreAtendimento($codsercli, $protocolo, $nome, $numero, $codocop)
     {
         $instance = new self();
 
@@ -97,6 +97,7 @@ class APIElite
         $horario = date("H:i:s");
 
         $codcli = self::getCodcli($codsercli);
+
         // Dados do payload
         $data = [
             "request" => [
@@ -109,7 +110,7 @@ class APIElite
                     "codcli" => $codcli,
                     "codsercli" => $codsercli,
                     "codmvis" => "LI5M0YTCLC",
-                    "codocop" => "EXMM1DIUD4",
+                    "codocop" => $codocop,
                     "coddep" => "01WX0Y8WCF",
                     "date" => $dataDeHoje,
                     "time" => $horario,
@@ -125,7 +126,8 @@ class APIElite
         return $response[0]["codoco"];
     }
 
-    public static function fechaAtendimento($codoco)
+
+    public static function fechaAtendimento($codoco, $codocop)
     {
         $instance = new self();
 
@@ -144,7 +146,7 @@ class APIElite
                     "codoco" => $codoco,
                     "codsto" => "01CONCLUID",
                     "codvis" => "EXML0CZOSI",
-                    "codocop_sol" => "EXMM1DIUD4",
+                    "codocop_sol" => $codocop,
                     "motivo_fechamento" => "LIUP0ZJ57F",
                     "descri_oco_sol" => "Atendimento realizado pela IA sem passar pelo CSA",
                     "hora_sol" => $horario,

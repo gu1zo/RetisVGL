@@ -11,6 +11,7 @@ class Fila
     public $codsercli;
     public $protocolo_sz;
     public $numero;
+    public $cpf_cnpj;
 
     public function cadastrar()
     {
@@ -18,6 +19,7 @@ class Fila
             'nome' => $this->nome,
             'codsercli' => $this->codsercli,
             'protocolo_sz' => $this->protocolo_sz,
+            'cpf_cnpj' => $this->cpf_cnpj,
             'numero' => $this->numero,
         ]);
 

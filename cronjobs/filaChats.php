@@ -15,8 +15,12 @@ $results = EntityFila::getMassivas(null, 'id ASC', $limite);
 $qtd = EntityFila::getMassivas(null, 'id ASC', $limite, 'COUNT(*) as qtd')->fetchObject()->qtd;
 if ($qtd > 0) {
     while ($obFila = $results->fetchObject(EntityFila::class)) {
-        $codoco = APIElite::abreAtendimento($obFila->codsercli, $obFila->protocolo_sz, $obFila->nome, $obFila->numero);
-        APIElite::fechaAtendimento($codoco);
+        $cpf_cnpj_limpo = preg_replace('/[\.\-\/]/', '', $obFila->cpf_cnpj);
+        $codocop = "EXMM1DP8T2";
+        $codocop = strlen($cpf_cnpj_limpo) === 11 ? "EXMM1DP8T2" : "EXMM1F5GL0";
+
+        $codoco = APIElite::abreAtendimento($obFila->codsercli, $obFila->protocolo_sz, $obFila->nome, $obFila->numero, $codocop);
+        APIElite::fechaAtendimento($codoco, $codocop);
         APIFortics::closeChat($obFila->protocolo_sz);
 
         $obFila->excluir();
