@@ -16,7 +16,6 @@ $qtd = EntityMassiva::getMassivas('id_massiva is not null', 'id ASC', $limite, '
 if ($qtd > 0) {
     while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
         if (APIInt6::verificaMassivaBydId((string) $obMassiva->id_massiva)) {
-            echo $obMassiva->id_massiva;
             Massiva::documentaChatsByIdMassiva($obMassiva->id_massiva);
         }
     }
