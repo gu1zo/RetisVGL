@@ -75,14 +75,19 @@ class APIFortics
         $responseData = json_decode($response, true);
         return $responseData['data'][0]['_id'] ?? 'ID não encontrado';
     }
-    public static function sendMessageAtt($numero, $message, &$multiHandle, &$curlHandles, $token)
+    public static function sendMessageAtt($numero, $message, &$multiHandle, &$curlHandles, $token, $end = false)
     {
         $instance = new self();
+        $close_session = 0;
+        if ($end) {
+            $close_session = 1;
+        }
         $data = [
             "platform_id" => $numero,
             "type" => "text",
             "channel_id" => "647f2d69971cd900180bbd8c",
-            "message" => $message
+            "message" => $message,
+            "close_session" => $close_session
         ];
         $url = $instance->url . '/message/send';
 

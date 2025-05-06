@@ -112,7 +112,7 @@ class Massiva extends Page
         $token = APIFortics::getToken();
         $mensagem = "A instabilidade na região foi resolvida e o acesso à internet já foi normalizado. Caso sua conexão ainda não tenha sido restabelecida, sugerimos que reinicie seu roteador. Se o problema persistir, entre em contato com nosso suporte para que possamos auxiliar.\n\nAgradecemos sua paciência e compreensão.";
         while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
-            APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles, $token);
+            APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles, $token, true);
 
             $obFila = new EntityFila;
             $obFila->nome = $obMassiva->nome;
@@ -138,7 +138,7 @@ class Massiva extends Page
         $token = APIFortics::getToken();
         $mensagem = "A instabilidade na região foi resolvida e o acesso à internet já foi normalizado. Caso sua conexão ainda não tenha sido restabelecida, sugerimos que reinicie seu roteador. Se o problema persistir, entre em contato com nosso suporte para que possamos auxiliar.\n\nAgradecemos sua paciência e compreensão.";
         while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
-            APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles, $token);
+            APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles, $token, true);
 
             $obFila = new EntityFila;
             $obFila->nome = $obMassiva->nome;
@@ -158,6 +158,7 @@ class Massiva extends Page
         $postVars = $request->getPostVars();
         $mensagem = $postVars['mensagem'];
         $massivas = $postVars['massivas'];
+        $todos = isset($postVars['todos']);
 
         // Inicializa Multi cURL
         $multiHandle = curl_multi_init();
@@ -167,7 +168,15 @@ class Massiva extends Page
         foreach ($massivas as $k) {
             $results = EntityMassiva::getMassivasByIdMassiva($k);
             while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
-                APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles, $token);
+                if ($todos) {
+                    APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles, $token);
+                    $obMassiva->avisado = 1;
+                    $obMassiva->atualizar();
+                } else if ($obMassiva->avisado == 0) {
+                    APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles, $token);
+                    $obMassiva->avisado = 1;
+                    $obMassiva->atualizar();
+                }
             }
         }
         // Executa todas as requisições ao mesmo tempo

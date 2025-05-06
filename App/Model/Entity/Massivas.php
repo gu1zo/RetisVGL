@@ -13,6 +13,7 @@ class Massivas
     public $numero;
     public $id_massiva;
     public $cpf_cnpj;
+    public $avisado;
 
     public function cadastrar()
     {
@@ -22,7 +23,8 @@ class Massivas
             'id_massiva' => $this->id_massiva,
             'nome' => $this->nome,
             'cpf_cnpj' => $this->cpf_cnpj,
-            'codsercli' => $this->codsercli
+            'codsercli' => $this->codsercli,
+            'avisado' => 0
         ]);
 
         return true;
@@ -49,5 +51,20 @@ class Massivas
     {
         return (new Database('massivas'))->delete('id =' . $this->id);
 
+    }
+
+    public function atualizar()
+    {
+        (new Database('massivas'))->update('id =' . $this->id, [
+            'protocolo_sz' => $this->protocolo_sz,
+            'numero' => $this->numero,
+            'id_massiva' => $this->id_massiva,
+            'nome' => $this->nome,
+            'cpf_cnpj' => $this->cpf_cnpj,
+            'codsercli' => $this->codsercli,
+            'avisado' => $this->avisado
+        ]);
+
+        return true;
     }
 }

@@ -217,7 +217,6 @@ class APIElite
 
         // Decodifica a resposta JSON
         $decodedResponse = json_decode($response, true);
-
         // Verifica se a decodificação foi bem-sucedida
         if (is_null($decodedResponse)) {
             return "Erro ao decodificar a resposta da API: " . $response;

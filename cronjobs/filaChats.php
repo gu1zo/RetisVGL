@@ -21,7 +21,7 @@ if ($qtd > 0) {
 
         $codoco = APIElite::abreAtendimento($obFila->codsercli, $obFila->protocolo_sz, $obFila->nome, $obFila->numero, $codocop);
         APIElite::fechaAtendimento($codoco, $codocop);
-        APIFortics::closeChat($obFila->protocolo_sz);
+        //APIFortics::closeChat($obFila->protocolo_sz);
 
         $obFila->excluir();
     }
