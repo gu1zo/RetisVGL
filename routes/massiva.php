@@ -49,6 +49,16 @@ $obRouter->post('/massiva/atualizar', [
     }
 ]);
 
+$obRouter->post('/massiva/finalizar', [
+    'middlewares' => [
+        'required-login'
+    ],
+    function ($request) {
+        return new Response(200, Massiva::finalizaChats($request));
+    }
+]);
+
+
 $obRouter->get('/massiva/delete', [
     'middlewares' => [
         'required-login'

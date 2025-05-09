@@ -186,6 +186,19 @@ class Massiva extends Page
         exit;
     }
 
+    public static function finalizaChats($request)
+    {
+        $postVars = $request->getPostVars();
+        $massivas = $postVars['massivas'];
+
+        foreach ($massivas as $k) {
+            self::documentaChatsByIdMassiva($k);
+        }
+
+        $request->getRouter()->redirect('/massiva?status=atualizado');
+        exit;
+    }
+
     public static function getDeleteAfetado($request)
     {
         $queryParams = $request->getQueryParams();
