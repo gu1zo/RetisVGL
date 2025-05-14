@@ -35,8 +35,9 @@ class Email
             $mail->clearAddresses(); // Limpa destinatários anteriores
             $mail->addAddress($cliente['e_mail']);
             $mail->send();
+            return true;
         } catch (Exception $e) {
-            var_dump($e);
+            return false;
         }
 
     }
