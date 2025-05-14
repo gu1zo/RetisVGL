@@ -15,12 +15,14 @@ use \App\Model\Entity\Manutencao as EntityManutencao;
 use \App\Model\Entity\Backbone as EntityBackbone;
 use \App\Model\Entity\EventoConclusao as EntityEventoConclusao;
 use \App\Model\Entity\Alteracoes as EntityAlteracoes;
+use \App\Model\Entity\FilaEmail as EntityFilaEmails;
 use \App\Model\Entity\Joins as EntityJoins;
 use \App\Session\Login\Login;
 use \App\Model\Rest\APIElite;
 
 use \App\Utils\StringManipulation;
 use DateTime;
+use Dom\Entity;
 use IntlDateFormatter;
 
 class Evento extends Page
@@ -112,8 +114,16 @@ class Evento extends Page
         }
         if ($tipo == 'evento') {
             $email = true;
+            $obFilaEmails = new EntityFilaEmails;
             foreach ($clientes as $k) {
-                Email::send('incidente', $postVars, $k);
+                $obFilaEmails->protocolo = $protocolo;
+                $obFilaEmails->tipo = 'incidente';
+                $obFilaEmails->vars = $postVars;
+                $obFilaEmails->cliente_email = $k['e_mail'];
+                $obFilaEmails->cliente_nome = $k['nome'];
+                $obFilaEmails->cadastrar();
+
+                //Email::send('incidente', $postVars, $k);
             }
 
         }
@@ -294,6 +304,12 @@ class Evento extends Page
             'url' => '/evento/email?id=' . $id,
             'title' => 'Enviar E-mail',
             'icon' => 'bi-envelope',
+            'color' => 'primary',
+        ]);
+        $content .= View::render('/eventos/elements/button', [
+            'url' => '/evento/email_enviados?id=' . $id,
+            'title' => 'Ver E-mails',
+            'icon' => 'bi-envelope-open',
             'color' => 'primary',
         ]);
 
@@ -492,28 +508,20 @@ class Evento extends Page
         switch ($queryParams['status']) {
             case 'created':
                 return Alert::getSuccess('O evento foi cadastrado com sucesso.');
-                break;
             case 'edited':
                 return Alert::getSuccess('O evento foi editado com sucesso.');
-                break;
             case 'no-pontos':
                 return Alert::getError('Nenhum ponto de acesso válido foi selecionado. Tente novamente!');
-                break;
             case 'approved':
                 return Alert::getSuccess('A manutenção foi aprovada com sucesso!');
-                break;
             case 'executed':
                 return Alert::getSuccess('A manutenção está em execução!');
-                break;
             case 'completed':
                 return Alert::getSuccess('O evento foi concluído!');
-                break;
             case 'no-id':
                 return Alert::getError('Evento não encontrado!');
-                break;
             case 'email-send':
                 return Alert::getSuccess('Os E-mails foram enviados com sucesso!');
-                break;
         }
         return '';
     }
@@ -888,9 +896,15 @@ class Evento extends Page
             $vars['horario-previsto'] = $obManutencao->dataPrevista;
         }
 
-
+        $obFilaEmails = new EntityFilaEmails;
         foreach ($clientes as $k) {
-            Email::send($tipo, $vars, $k);
+            $obFilaEmails->protocolo = $obEvento->protocolo;
+            $obFilaEmails->tipo = $tipo;
+            $obFilaEmails->vars = $postVars;
+            $obFilaEmails->cliente_email = $k['e_mail'];
+            $obFilaEmails->cliente_nome = $k['nome'];
+            $obFilaEmails->cadastrar();
+            //Email::send($tipo, $vars, $k);
         }
 
         $obEvento->email = true;
@@ -1002,8 +1016,8 @@ class Evento extends Page
             case 'reagendar':
                 $string .= "*REAGENDADO* 🕑\n";
                 break;
-                $string .= "*EM EXECUÇÃO* ⚠️\n";
             case 'executar':
+                $string .= "*EM EXECUÇÃO* ⚠️\n";
                 break;
         }
 
@@ -1014,4 +1028,40 @@ class Evento extends Page
         return $string;
     }
 
+    public static function getTableEmailsEnviados($request)
+    {
+        $queryParams = $request->getQueryParams();
+        $id = $queryParams['id'];
+        $content = View::render('eventos/table/emails-table', [
+            'itens' => self::getEmailsEnviadosItens($request),
+            'id' => $id
+        ]);
+
+        return self::getPage('RetisVGL > Emails Enviados', $content);
+    }
+    private static function getEmailsEnviadosItens($request)
+    {
+        $queryParams = $request->getQueryParams();
+        $id = $queryParams['id'];
+        $itens = '';
+
+        $obEvento = EntityEvento::getEventoById($id);
+
+        $results = EntityFilaEmails::getEmailsByProtcol($obEvento->protocolo);
+        while ($obFilaEmails = $results->fetchObject(EntityFilaEmails::class)) {
+            $data = !is_null($obFilaEmails->enviado_em) ?
+                (new DateTime($obFilaEmails->enviado_em))->format('d/m/Y H:i:s') : '-';
+
+
+            $itens .= View::render('eventos/table/email-item', [
+                'email' => $obFilaEmails->cliente_email,
+                'cliente' => $obFilaEmails->cliente_nome,
+                'status' => ucfirst($obFilaEmails->status),
+                'data' => $data
+            ]);
+        }
+
+        return $itens;
+
+    }
 }

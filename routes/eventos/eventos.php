@@ -144,6 +144,16 @@ $obRouter->post('/evento/email', [
     }
 ]);
 
+$obRouter->get('/evento/email_enviados', [
+    'middlewares' => [
+        'required-login',
+        'verify-id'
+    ],
+    function ($request) {
+        return new response(200, Evento\Evento::getTableEmailsEnviados($request));
+    }
+]);
+
 /*
 $obRouter->get('/evento/syncbanco', [
     'middlewares' => [

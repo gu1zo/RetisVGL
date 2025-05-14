@@ -12,7 +12,6 @@ class Email
     public static function send($tipo, $vars, $cliente)
     {
         $assunto = isset($vars['assunto']) ? $vars['assunto'] : 'Atualizações Eventos na Rede';
-
         try {
             $mail = new PHPMailer(true);
 
@@ -37,6 +36,7 @@ class Email
             $mail->addAddress($cliente['e_mail']);
             $mail->send();
         } catch (Exception $e) {
+            var_dump($e);
         }
 
     }
