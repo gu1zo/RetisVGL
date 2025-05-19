@@ -107,12 +107,7 @@ class Massiva extends Page
     public static function documentaChats($request)
     {
         $results = EntityMassiva::getMassivas(null, 'id ASC');
-        $multiHandle = curl_multi_init();
-        $curlHandles = [];
-        $token = APIFortics::getToken();
-        $mensagem = "A instabilidade na região foi resolvida e o acesso à internet já foi normalizado. Caso sua conexão ainda não tenha sido restabelecida, sugerimos que reinicie seu roteador. Se o problema persistir, entre em contato com nosso suporte para que possamos auxiliar.\n\nAgradecemos sua paciência e compreensão.";
         while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
-            APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles, $token, true);
 
             $obFila = new EntityFila;
             $obFila->nome = $obMassiva->nome;
@@ -124,7 +119,6 @@ class Massiva extends Page
 
             $obMassiva->excluir();
         }
-        APIFortics::executeBatchRequests($multiHandle, $curlHandles);
         $request->getRouter()->redirect('/massiva?status=documented');
         exit;
     }
@@ -133,13 +127,7 @@ class Massiva extends Page
     public static function documentaChatsByIdMassiva($id_massiva)
     {
         $results = EntityMassiva::getMassivasByIdMassiva($id_massiva);
-        $multiHandle = curl_multi_init();
-        $curlHandles = [];
-        $token = APIFortics::getToken();
-        $mensagem = "A instabilidade na região foi resolvida e o acesso à internet já foi normalizado. Caso sua conexão ainda não tenha sido restabelecida, sugerimos que reinicie seu roteador. Se o problema persistir, entre em contato com nosso suporte para que possamos auxiliar.\n\nAgradecemos sua paciência e compreensão.";
         while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
-            APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles, $token, true);
-
             $obFila = new EntityFila;
             $obFila->nome = $obMassiva->nome;
             $obFila->codsercli = $obMassiva->codsercli;
@@ -150,7 +138,6 @@ class Massiva extends Page
 
             $obMassiva->excluir();
         }
-        APIFortics::executeBatchRequests($multiHandle, $curlHandles);
     }
 
     public static function atualizaChats($request)
