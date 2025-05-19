@@ -57,7 +57,7 @@ function getAllPlatformIds($baseUrl, $authorizationToken)
 }
 
 // 🔧 Configuração da URL da API e token
-$baseUrl = 'https://ggnet.sz.chat/api/v4/attendances';
+$baseUrl = 'https://ggnet.sz.chat/api/v4/attendances?campaign_id=67d3295c0af8a0cd7606a19f';
 $authorizationToken = 'Bearer' . APIFortics::getToken(); // Substitua pelo seu token real
 
 // 🚀 Executa e imprime os platform_id coletados
