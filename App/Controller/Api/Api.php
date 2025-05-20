@@ -111,7 +111,7 @@ class Api
             $falhas = "_" . $dataFormatada . "_ \nNenhuma tarefa pendente para o projeto\n";
         }
 
-        $message = "*GESTÃO DE FALHAS GGNET*\n" . $falhas . "\n*MANUTENÇÕES PROGRAMADAS GGNET*\n" . $manutencao;
+        $message = "*GESTÃO DE FALHAS*\n" . $falhas . "\n*MANUTENÇÕES PROGRAMADAS*\n" . $manutencao;
         return $message;
     }
 
