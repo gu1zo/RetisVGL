@@ -6,6 +6,7 @@ use App\http\Request;
 use WilliamCosta\DatabaseManager\Pagination;
 use App\Controller\Evento\Evento;
 use App\Model\Entity\Massivas as EntityMassiva;
+use App\Model\Entity\PontoAcesso as EntityPontoAcesso;
 use App\Model\Entity\Joins as EntityJoins;
 use App\Model\Entity\Cidades as EntityCidades;
 use App\Utils\DateManipulation;
@@ -177,6 +178,28 @@ class Api
                 'error' => false,
                 'message' => "Cadastrado com sucesso"
             ];
+        } catch (Exception $e) {
+            $data = [
+                'error' => true,
+                'message' => $e->getMessage()
+            ];
+        }
+        return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+
+    public static function getCoordenadasByPonto($request)
+    {
+        $postVars = $request->getPostVars();
+        try {
+            $nome = $postVars['nome'] ?? throw new Exception('Nome não definido');
+
+            $obPontoAcesso = EntityPontoAcesso::getPontoByName($nome);
+
+            $data = [
+                'latitude' => $obPontoAcesso->latitude,
+                'longitude' => $obPontoAcesso->longitude
+            ];
+
         } catch (Exception $e) {
             $data = [
                 'error' => true,

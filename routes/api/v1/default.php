@@ -36,3 +36,12 @@ $obRouter->post('/api/v1/setAfetado', [
         return new Response(200, Api\Api::setAfetado($request), 'application/json');
     }
 ]);
+
+$obRouter->post('/api/v1/coordenadas', [
+    'middlewares' => [
+        'api'
+    ],
+    function ($request) {
+        return new Response(200, Api\Api::getCoordenadasByPonto($request), 'application/json');
+    }
+]);
