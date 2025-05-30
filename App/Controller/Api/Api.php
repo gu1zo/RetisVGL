@@ -219,7 +219,7 @@ class Api
             $protocolo_sz = $postVars['protocolo_sz'] ?? throw new Exception('Protocolo do Sz não definido');
             $error = $postVars['error'] ?? throw new Exception('Erro não definido');
 
-            $obLogs = EntityLogs::getLogsByProtocolo($protocolo);
+            $obLogs = EntityLogs::getLogsByProtocolo($protocolo_sz);
 
             if ($obLogs instanceof EntityLogs) {
                 throw new Exception('Protocolo já cadastrado');

@@ -33,7 +33,7 @@ class LogsCallback
     }
     public static function getLogsByProtocolo($protocolo)
     {
-        return self::getLogs('protocolo = "' . $protocolo . '"')->fetchObject(self::class);
+        return self::getLogs('protocolo_sz = "' . $protocolo . '"')->fetchObject(self::class);
     }
     public static function getLogsByStatus($status)
     {
