@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Tempo de geração: 23/04/2025 às 14:02
--- Versão do servidor: 11.6.2-MariaDB-ubu2404
+-- Tempo de geração: 30/05/2025 às 17:02
+-- Versão do servidor: 11.7.2-MariaDB-ubu2404
 -- Versão do PHP: 8.2.27
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -116,7 +116,39 @@ CREATE TABLE `fila` (
   `nome` varchar(255) NOT NULL,
   `codsercli` varchar(255) NOT NULL,
   `protocolo_sz` varchar(255) NOT NULL,
-  `numero` varchar(255) NOT NULL
+  `numero` varchar(255) NOT NULL,
+  `cpf_cnpj` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `fila_emails`
+--
+
+CREATE TABLE `fila_emails` (
+  `id` int(11) NOT NULL,
+  `protocolo` int(11) NOT NULL,
+  `tipo` varchar(50) DEFAULT NULL,
+  `vars` text DEFAULT NULL,
+  `cliente_email` varchar(255) DEFAULT NULL,
+  `cliente_nome` varchar(255) DEFAULT NULL,
+  `status` enum('pendente','enviado','erro') DEFAULT 'pendente',
+  `enviado_em` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `logs_callback`
+--
+
+CREATE TABLE `logs_callback` (
+  `id` int(11) NOT NULL,
+  `protocolo` varchar(255) NOT NULL,
+  `protocolo_sz` varchar(255) NOT NULL,
+  `error` varchar(500) NOT NULL,
+  `status` enum('concluido','novo') NOT NULL DEFAULT 'novo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- --------------------------------------------------------
@@ -142,7 +174,9 @@ CREATE TABLE `massivas` (
   `numero` varchar(255) NOT NULL,
   `id_massiva` int(11) DEFAULT NULL,
   `codsercli` varchar(255) NOT NULL,
-  `nome` varchar(255) NOT NULL
+  `nome` varchar(255) NOT NULL,
+  `cpf_cnpj` varchar(255) NOT NULL,
+  `avisado` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- --------------------------------------------------------
@@ -255,6 +289,18 @@ ALTER TABLE `fila`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Índices de tabela `fila_emails`
+--
+ALTER TABLE `fila_emails`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `logs_callback`
+--
+ALTER TABLE `logs_callback`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Índices de tabela `manutencoes`
 --
 ALTER TABLE `manutencoes`
@@ -325,6 +371,18 @@ ALTER TABLE `eventos`
 -- AUTO_INCREMENT de tabela `fila`
 --
 ALTER TABLE `fila`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `fila_emails`
+--
+ALTER TABLE `fila_emails`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `logs_callback`
+--
+ALTER TABLE `logs_callback`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
