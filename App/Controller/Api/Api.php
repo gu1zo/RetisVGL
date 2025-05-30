@@ -7,6 +7,7 @@ use WilliamCosta\DatabaseManager\Pagination;
 use App\Controller\Evento\Evento;
 use App\Model\Entity\Massivas as EntityMassiva;
 use App\Model\Entity\PontoAcesso as EntityPontoAcesso;
+use App\Model\Entity\LogsCallback as EntityLogs;
 use App\Model\Entity\Joins as EntityJoins;
 use App\Model\Entity\Cidades as EntityCidades;
 use App\Utils\DateManipulation;
@@ -198,6 +199,43 @@ class Api
             $data = [
                 'latitude' => $obPontoAcesso->latitude,
                 'longitude' => $obPontoAcesso->longitude
+            ];
+
+        } catch (Exception $e) {
+            $data = [
+                'error' => true,
+                'message' => $e->getMessage()
+            ];
+        }
+        return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+
+    public static function setLogs($request)
+    {
+        $postVars = $request->getPostVars();
+
+        try {
+            $protocolo = $postVars['protocolo'] ?? throw new Exception('Protocolo não definido');
+            $protocolo_sz = $postVars['protocolo_sz'] ?? throw new Exception('Protocolo do Sz não definido');
+            $error = $postVars['error'] ?? throw new Exception('Erro não definido');
+
+            $obLogs = EntityLogs::getLogsByProtocolo($protocolo);
+
+            if ($obLogs instanceof EntityLogs) {
+                throw new Exception('Protocolo já cadastrado');
+            }
+
+            $obLogs = new EntityLogs;
+            $obLogs->protocolo = $protocolo;
+            $obLogs->protocolo_sz = $protocolo_sz;
+            $obLogs->error = $error;
+
+            if (!$obLogs->cadastrar()) {
+                throw new Exception('Erro ao cadastrar');
+            }
+            $data = [
+                'error' => false,
+                'message' => 'Cadastrado com sucesso'
             ];
 
         } catch (Exception $e) {

@@ -45,3 +45,12 @@ $obRouter->post('/api/v1/coordenadas', [
         return new Response(200, Api\Api::getCoordenadasByPonto($request), 'application/json');
     }
 ]);
+
+$obRouter->post('/api/v1/logs', [
+    'middlewares' => [
+        'api'
+    ],
+    function ($request) {
+        return new Response(200, Api\Api::setLogs($request), 'application/json');
+    }
+]);

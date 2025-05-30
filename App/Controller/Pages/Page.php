@@ -160,6 +160,12 @@ class Page
                     'icon' => 'bi bi-building-gear',
                     'link' => URL . '/cidades',
                     'content' => []
+                ],
+                [
+                    'name' => 'Logs Telegram',
+                    'icon' => 'bi bi-list-columns-reverse',
+                    'link' => URL . '/logs',
+                    'content' => []
                 ]
             ],
             'DADOS' => [

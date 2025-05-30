@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="card mt-4 shadow-sm border-1">
+    <div class="card-header">
+      <h5 class="card-title">Log de Erros do Telegram</h5>
+    </div>
+    <div class="card-body">
+      {{status}}
+      <form method="post">
+        <table id="table" class="table table-bordered text-center shadow">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col" class="text-center">Protocolo</th>
+              <th scope="col" class="text-center">Protocolo Sz</th>
+              <th scope="col" class="text-center">Erro</th>
+              <th scope="col" class="text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{itens}}
+          </tbody>
+        </table>
+        <div class="text-center">
+          <a class="btn btn-pink" href="{{URL}}">Voltar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
