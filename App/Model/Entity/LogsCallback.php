@@ -11,6 +11,7 @@ class LogsCallback
     public $protocolo;
     public $protocolo_sz;
     public $status;
+    public $data;
 
     public function cadastrar()
     {
@@ -18,6 +19,7 @@ class LogsCallback
             'protocolo_sz' => $this->protocolo_sz,
             'error' => $this->error,
             'protocolo' => $this->protocolo,
+            'data' => $this->data
         ]);
 
         return true;
@@ -51,7 +53,8 @@ class LogsCallback
             'protocolo_sz' => $this->protocolo_sz,
             'error' => $this->error,
             'protocolo' => $this->protocolo,
-            'status' => $this->status
+            'status' => $this->status,
+            'data' => $this->data
         ]);
 
         return true;

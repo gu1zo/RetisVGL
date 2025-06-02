@@ -230,6 +230,9 @@ class Api
             $obLogs->protocolo_sz = $protocolo_sz;
             $obLogs->error = $error;
 
+            $data = new DateTime('America/Sao_Paulo');
+            $obLogs->data = $data->format('Y-m-d H:i');
+
             if (!$obLogs->cadastrar()) {
                 throw new Exception('Erro ao cadastrar');
             }

@@ -29,6 +29,7 @@ class Logs extends Page
                 'protocolo' => $obLogs->protocolo,
                 'protocolo_sz' => $obLogs->protocolo_sz,
                 'erro' => $obLogs->error,
+                'data' => $obLogs->data
             ]);
         }
         return $item;
