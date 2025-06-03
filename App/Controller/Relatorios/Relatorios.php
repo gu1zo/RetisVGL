@@ -20,7 +20,7 @@ class Relatorios
         $dataInicioStr = $dataInicio->format('Y-m-01 00:00:00');
         $dataAtualStr = $dataAtual->format('Y-m-d 23:59:59');
 
-        $resultados = EntityEvento::getEventosByDateAndMonth($dataInicioStr, $dataAtualStr);
+        $resultados = EntityEvento::getEvento();
         $data = [
             ['protocolo', 'tipo', 'dataInicio', 'dataPrevista', 'dataFim', 'regional', 'total_afetados', 'backbone', 'motivo', 'forca_maior', 'pontosAcesso']
         ];

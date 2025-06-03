@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Tempo de geração: 30/05/2025 às 17:02
+-- Tempo de geração: 02/06/2025 às 17:40
 -- Versão do servidor: 11.7.2-MariaDB-ubu2404
 -- Versão do PHP: 8.2.27
 
@@ -148,7 +148,8 @@ CREATE TABLE `logs_callback` (
   `protocolo` varchar(255) NOT NULL,
   `protocolo_sz` varchar(255) NOT NULL,
   `error` varchar(500) NOT NULL,
-  `status` enum('concluido','novo') NOT NULL DEFAULT 'novo'
+  `status` enum('concluido','novo') NOT NULL DEFAULT 'novo',
+  `data` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- --------------------------------------------------------
