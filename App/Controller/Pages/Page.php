@@ -126,17 +126,6 @@ class Page
                         ]
                     ]
 
-                ],
-                [
-                    'name' => 'Proativo',
-                    'icon' => 'bi bi-clipboard-check',
-                    'content' => [
-                        [
-                            'item' => 'Novo Cadastro',
-                            'link' => URL . '/proatividade/novo'
-                        ]
-                    ]
-
                 ]
             ],
             'GESTÃO' => [
@@ -173,12 +162,6 @@ class Page
                     'name' => 'Eventos',
                     'icon' => 'bi bi-table',
                     'link' => URL . '/evento/table?evento-status=todos',
-                    'content' => []
-                ],
-                [
-                    'name' => 'Proatividade',
-                    'icon' => 'bi bi-table',
-                    'link' => URL . '/proatividade',
                     'content' => []
                 ]
             ],
