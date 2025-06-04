@@ -73,7 +73,7 @@ class Api
         $falhas = '';
 
 
-        $resultados = EntityJoins::getEventoByStatus('em execucao" OR e.status = "pendente');
+        $resultados = EntityJoins::getEventoByStatus(['em execucao', 'pendente']);
         if ($resultados->rowCount() > 0) {
             while ($row = $resultados->fetchObject(EntityJoins::class)) {
                 $dataInicio = DateTime::createFromFormat('d/m/Y H:i', $row->dataInicio);

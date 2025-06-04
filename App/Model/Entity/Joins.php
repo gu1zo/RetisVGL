@@ -136,19 +136,36 @@ class Joins
         )->fetchObject(self::class);
     }
 
-    public static function getEventoByStatus($status)
+    public static function getEventoByStatus($statuses)
     {
+        // Verifica se é array, se não for transforma
+        if (!is_array($statuses)) {
+            $statuses = [$statuses];
+        }
+
+        // Gera os placeholders (:status1, :status2, ...)
+        $placeholders = [];
+        $params = [];
+        foreach ($statuses as $index => $status) {
+            $key = ":status{$index}";
+            $placeholders[] = $key;
+            $params[$key] = $status;
+        }
+
+        // Monta o WHERE com IN
+        $where = 'e.status IN (' . implode(',', $placeholders) . ')';
+
+        // Executa o SELECT com JOIN corretamente
         return (new Database('eventos e JOIN usuarios u ON e.id_usuario_criador = u.id'))->select(
-            'e.status = :status',
+            $where,
             null,
             null,
             'e.*, u.nome AS usuario_nome',
             null,
-            [
-                'status' => $status
-            ]
+            $params
         );
     }
+
 
     public static function getEventoById($id)
     {
