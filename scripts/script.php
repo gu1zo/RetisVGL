@@ -12,19 +12,37 @@ if (!file_exists($csvFile) || !is_readable($csvFile)) {
 }
 
 if (($handle = fopen($csvFile, 'r')) !== false) {
+    // Função para remover BOM do início da string
+    function removeBom($str)
+    {
+        if (substr($str, 0, 3) === "\xEF\xBB\xBF") {
+            $str = substr($str, 3);
+        }
+        return $str;
+    }
 
     $header = fgetcsv($handle, 1000, ';');
+
+    // Remove BOM do primeiro elemento do cabeçalho, se existir
+    if (isset($header[0])) {
+        $header[0] = removeBom($header[0]);
+    }
+
     $header = array_map(function ($h) {
-        return strtolower(trim($h));
+        return strtolower(trim($h, " \t\n\r\0\x0B\""));
     }, $header);
+
+    print_r($header);
 
     $colProtocolo = array_search('protocolo', $header);
     $colDataInicio = array_search('datainicio', $header);
     $colDataFim = array_search('datafim', $header);
 
     if ($colProtocolo === false || $colDataInicio === false || $colDataFim === false) {
-        die("Colunas protocolo, dataInicio ou dataFim não encontradas no CSV.");
+        die("Colunas protocolo, datainicio ou datafim não encontradas no CSV.");
     }
+
+
 
     while (($row = fgetcsv($handle, 1000, ';')) !== false) {
 
