@@ -141,19 +141,39 @@ class Database
    * @param  string $group
    * @return PDOStatement
    */
-  public function select($where = null, $order = null, $limit = null, $fields = '*', $group = null)
+  public function select($where = null, $order = null, $limit = null, $fields = '*', $group = null, $params = [])
   {
-    // DADOS DA QUERY
-    $where = !empty($where) ? 'WHERE ' . $where : '';
-    $order = !empty($order) ? 'ORDER BY ' . $order : '';
-    $limit = !empty($limit) ? 'LIMIT ' . $limit : '';
-    $group = !empty($group) ? 'GROUP BY ' . $group : '';
+    // MONTAGEM DOS FRAGMENTOS
+    $sql = 'SELECT ' . $fields . ' FROM ' . $this->table;
 
-    // MONTA A QUERY
-    $query = 'SELECT ' . $fields . ' FROM ' . $this->table . ' ' . $where . ' ' . $group . ' ' . $order . ' ' . $limit;
-    // EXECUTA A QUERY
-    return $this->execute($query);
+    if (!empty($where)) {
+      $sql .= ' WHERE ' . $where;
+    }
+
+    if (!empty($group)) {
+      $sql .= ' GROUP BY ' . $group;
+    }
+
+    if (!empty($order)) {
+      $sql .= ' ORDER BY ' . $order;
+    }
+
+    if (!empty($limit)) {
+      $sql .= ' LIMIT ' . $limit;
+    }
+
+    // PREPARA A QUERY
+    $stmt = $this->connection->prepare($sql);
+
+    // BIND DE PARÂMETROS
+    foreach ($params as $key => $value) {
+      $stmt->bindValue(is_int($key) ? $key + 1 : ':' . ltrim($key, ':'), $value);
+    }
+    // EXECUTA E RETORNA
+    $stmt->execute();
+    return $stmt;
   }
+
 
   /**
    * Método responsável por executar atualizações no banco de dados
@@ -181,16 +201,22 @@ class Database
    * @param  string $where
    * @return boolean
    */
-  public function delete($where)
+  public function delete($where, $params = [])
   {
     // MONTA A QUERY
     $query = 'DELETE FROM ' . $this->table . ' WHERE ' . (!empty($where) ? $where : '1=1');
 
-    // EXECUTA A QUERY
-    $this->execute($query);
+    // PREPARA A QUERY
+    $stmt = $this->connection->prepare($query);
 
-    // RETORNA SUCESSO
-    return true;
+    // BIND DE PARÂMETROS
+    foreach ($params as $key => $value) {
+      $stmt->bindValue(is_int($key) ? $key + 1 : ':' . ltrim($key, ':'), $value);
+    }
+
+    // EXECUTA E RETORNA
+    return $stmt->execute();
   }
+
 
 }

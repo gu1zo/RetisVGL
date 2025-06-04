@@ -30,34 +30,41 @@ class Proatividade
 
     public function atualizar()
     {
-        return (new Database('proatividade'))->update('id =' . $this->id, [
-            'protocolo' => $this->protocolo,
-            'data' => $this->data,
-            'regional' => $this->regional,
-            'host' => $this->host,
-            'observacao' => $this->observacao,
-            'id_usuario_criador' => $this->id_usuario_criador
-        ]);
+        return (new Database('proatividade'))->update(
+            'id = ' . $this->id,
+            [
+                'protocolo' => $this->protocolo,
+                'data' => $this->data,
+                'regional' => $this->regional,
+                'host' => $this->host,
+                'observacao' => $this->observacao,
+                'id_usuario_criador' => $this->id_usuario_criador
+            ]
+        );
     }
+
 
     public function excluir($id)
     {
         return (new Database('proatividade'))->delete('id =' . $this->id);
 
     }
+
     public static function getProatividadeByProtocol($protocolo)
     {
-        return (new Database('proatividade'))->select('protocolo = "' . $protocolo . '"')->fetchObject(self::class);
+        return (new Database('proatividade'))
+            ->select('protocolo = :protocolo', null, null, '*', null, ['protocolo' => $protocolo])
+            ->fetchObject(self::class);
     }
 
     public static function getProatividadeById($id)
     {
-        return self::getProatividade('id =' . $id)->fetchObject(self::class);
+        return self::getProatividade('id = :id', null, null, '*', ['id' => $id])
+            ->fetchObject(self::class);
     }
 
-    public static function getProatividade($where = null, $order = null, $limit = null, $fields = '*')
+    public static function getProatividade($where = null, $order = null, $limit = null, $fields = '*', $params = [])
     {
-        return (new Database('proatividade'))->select($where, $order, $limit, $fields);
+        return (new Database('proatividade'))->select($where, $order, $limit, $fields, null, $params);
     }
-
 }

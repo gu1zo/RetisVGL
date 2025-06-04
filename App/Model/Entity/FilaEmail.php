@@ -42,14 +42,17 @@ class FilaEmail
         return true;
     }
 
-    public static function getEmails($where = null, $order = null, $limit = null, $fields = '*', $group = null)
+    public static function getEmails($where = null, $order = null, $limit = null, $fields = '*', $group = null, $params = [])
     {
-        return (new Database('fila_emails'))->select($where, $order, $limit, $fields, $group);
+        return (new Database('fila_emails'))->select($where, $order, $limit, $fields, $group, $params);
     }
-    public static function getEmailsByProtcol($protocol)
+    public static function getEmailsByProtocol($protocol)
     {
-        return self::getEmails('protocolo = "' . $protocol . '"');
+        return self::getEmails('protocolo = :protocolo', null, null, '*', null, [
+            ':protocolo' => $protocol
+        ]);
     }
+
     public function excluir()
     {
         return (new Database('fila_emails'))->delete('id =' . $this->id);

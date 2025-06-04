@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Model\Entity;
 
 use WilliamCosta\DatabaseManager\Database;
@@ -19,15 +18,12 @@ class Evento
     public $status = 'em execucao';
 
     public $mes;
-
     public $total;
-
     public $forca_maior;
-
 
     public function cadastrar()
     {
-        $this->id = (new Database(table: 'eventos'))->insert([
+        $this->id = (new Database('eventos'))->insert([
             'tipo' => $this->tipo,
             'protocolo' => $this->protocolo,
             'dataInicio' => $this->dataInicio,
@@ -40,9 +36,10 @@ class Evento
         ]);
         return true;
     }
+
     public function atualizar()
     {
-        (new Database('eventos'))->update('id =' . $this->id, [
+        (new Database('eventos'))->update('id = ' . $this->id, [
             'tipo' => $this->tipo,
             'protocolo' => $this->protocolo,
             'dataInicio' => $this->dataInicio,
@@ -55,32 +52,62 @@ class Evento
         ]);
         return true;
     }
+
     public static function getEventoByProtocol($protocolo)
     {
-        return (new Database('eventos'))->select('protocolo = "' . $protocolo . '"')->fetchObject(self::class);
+        return (new Database('eventos'))->select(
+            'protocolo = :protocolo',
+            null,
+            null,
+            '*',
+            null,
+            [':protocolo' => $protocolo]
+        )->fetchObject(self::class);
     }
-
 
     public static function getEventoByStatus($status)
     {
         if (isset($status)) {
-            return (new Database('eventos'))->select('status = "' . $status . '"');
+            return (new Database('eventos'))->select(
+                'status = :status',
+                null,
+                null,
+                '*',
+                null,
+                [':status' => $status]
+            );
         }
+
         return (new Database('eventos'))->select();
     }
 
     public static function getEventoById($id)
     {
-        return self::getEvento('id =' . $id)->fetchObject(self::class);
+        return self::getEvento(
+            'id = :id',
+            null,
+            null,
+            '*',
+            null,
+            [':id' => $id]
+        )->fetchObject(self::class);
     }
-    public static function getEvento($where = null, $order = null, $limit = null, $fields = '*')
+
+    public static function getEvento($where = null, $order = null, $limit = null, $fields = '*', $group = null, $params = [])
     {
-        return (new Database('eventos'))->select($where, $order, $limit, $fields);
+        return (new Database('eventos'))->select($where, $order, $limit, $fields, $group, $params);
     }
 
     public static function getQtdEventoByStatus($status)
     {
-        return (new Database('eventos'))->select('status = "' . $status . '"', null, null, 'COUNT(*) as qtd')->fetchObject()->qtd;
+        return (new Database('eventos'))->select(
+            'status = :status',
+            null,
+            null,
+            'COUNT(*) as qtd',
+            null,
+            [':status' => $status]
+        )->fetchObject()->qtd;
     }
 
     public static function getTotalClientesAfetados()
@@ -89,20 +116,26 @@ class Evento
 
         $results = self::getEventoByStatus('em execucao');
         while ($obEvento = $results->fetchObject(self::class)) {
-
             $clientes = json_decode($obEvento->clientes, true);
-
             foreach ($clientes as $k) {
                 $total++;
             }
         }
         return $total;
     }
+
     public static function getEventosByDateAndMonth($dataInicio, $dataAtual)
     {
-        return (new Database('eventos'))->select('dataInicio BETWEEN "' . $dataInicio . '" AND "' . $dataAtual . '"', 'dataInicio');
+        return (new Database('eventos'))->select(
+            'dataInicio BETWEEN :inicio AND :fim',
+            'dataInicio',
+            null,
+            '*',
+            null,
+            [
+                ':inicio' => $dataInicio,
+                ':fim' => $dataAtual
+            ]
+        );
     }
-
-
-
 }

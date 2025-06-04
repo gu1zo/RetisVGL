@@ -25,9 +25,17 @@ class User
         return (new Database('usuarios'))->select('email = "' . $email . '"')->fetchObject(self::class);
     }
 
-    public static function getUsers($where = null, $order = null, $limit = null, $fields = '*')
+    public static function getUsers($where = null, $order = null, $limit = null, $fields = '*', $params = [])
     {
-        return (new Database('usuarios'))->select($where, $order, $limit, $fields);
+        return (new Database('usuarios'))->select($where, $order, $limit, $fields, null, $params);
+    }
+
+    public static function getUserById($id)
+    {
+        $where = 'id = :id';
+        $params = ['id' => $id];
+
+        return self::getUsers($where, null, null, '*', $params)->fetchObject(self::class);
     }
 
     public function cadastrar()
@@ -55,10 +63,7 @@ class User
         ]);
     }
 
-    public static function getUserById($id)
-    {
-        return self::getUsers('id =' . $id)->fetchObject(self::class);
-    }
+
 
     public function excluir()
     {

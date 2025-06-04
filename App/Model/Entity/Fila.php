@@ -26,15 +26,18 @@ class Fila
         return true;
     }
 
-    public static function getMassivas($where = null, $order = null, $limit = null, $fields = '*', $group = null)
+    public static function getMassivas($where = null, $order = null, $limit = null, $fields = '*', $group = null, $params = [])
     {
-        return (new Database('fila'))->select($where, $order, $limit, $fields, $group);
+        return (new Database('fila'))->select($where, $order, $limit, $fields, $group, $params);
     }
 
     public static function getMassivaByNumber($numero)
     {
-        return self::getMassivas('numero =' . $numero)->fetchObject(self::class);
+        return self::getMassivas('numero = :numero', null, null, '*', null, [
+            ':numero' => $numero
+        ])->fetchObject(self::class);
     }
+
     public function excluir()
     {
         return (new Database('fila'))->delete('id =' . $this->id);

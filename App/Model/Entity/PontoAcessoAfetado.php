@@ -21,21 +21,33 @@ class PontoAcessoAfetado
 
     public static function getPontoAcessoAfetadoById($id)
     {
-        return self::getPontoAcessoAfetado('evento_id =' . $id);
+        return self::getPontoAcessoAfetado('evento_id = :id', null, null, '*', ['id' => $id]);
     }
+
     public static function getPontoAcessoAfetadoByIdAndCode($id, $codigo)
     {
-        return self::getPontoAcessoAfetado('evento_id ="' . $id . '"AND ponto_acesso_codigo ="' . $codigo . '"')->fetchObject(self::class);
+        $where = 'evento_id = :id AND ponto_acesso_codigo = :codigo';
+        $params = [
+            'id' => $id,
+            'codigo' => $codigo
+        ];
+
+        return self::getPontoAcessoAfetado($where, null, null, '*', $params)->fetchObject(self::class);
     }
 
-    public static function getPontoAcessoAfetado($where = null, $order = null, $limit = null, $fields = '*')
+    public static function getPontoAcessoAfetado($where = null, $order = null, $limit = null, $fields = '*', $params = [])
     {
-        return (new Database('pontos_acesso_afetados'))->select($where, $order, $limit, $fields);
+        return (new Database('pontos_acesso_afetados'))->select($where, $order, $limit, $fields, null, $params);
     }
+
     public static function excluir($evento_id, $ponto_acesso_codigo)
     {
-        return (new Database('pontos_acesso_afetados'))->delete("evento_id =" . $evento_id . " AND ponto_acesso_codigo =" . $ponto_acesso_codigo);
+        $where = 'evento_id = :id AND ponto_acesso_codigo = :codigo';
+        $params = [
+            'id' => $evento_id,
+            'codigo' => $ponto_acesso_codigo
+        ];
 
+        return (new Database('pontos_acesso_afetados'))->delete($where, $params);
     }
-
 }

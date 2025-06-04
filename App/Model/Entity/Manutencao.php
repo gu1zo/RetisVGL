@@ -18,20 +18,25 @@ class Manutencao
 
         return true;
     }
+
     public function atualizar()
     {
-        (new Database('manutencoes'))->update('evento_id =' . $this->evento_id, [
+        (new Database('manutencoes'))->update('evento_id = ' . $this->evento_id, [
             'dataPrevista' => $this->dataPrevista
         ]);
+
+        return true;
     }
 
     public static function getManutencaoById($evento_id)
     {
-        return self::getManutencao('evento_id =' . $evento_id)->fetchObject(self::class);
+        return self::getManutencao('evento_id = :evento_id', null, null, '*', [
+            'evento_id' => $evento_id
+        ])->fetchObject(self::class);
     }
 
-    public static function getManutencao($where = null, $order = null, $limit = null, $fields = '*')
+    public static function getManutencao($where = null, $order = null, $limit = null, $fields = '*', $params = [])
     {
-        return (new Database('manutencoes'))->select($where, $order, $limit, $fields);
+        return (new Database('manutencoes'))->select($where, $order, $limit, $fields, null, $params);
     }
 }

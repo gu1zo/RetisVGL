@@ -30,32 +30,40 @@ class Massivas
         return true;
     }
 
-    public static function getMassivas($where = null, $order = null, $limit = null, $fields = '*', $group = null)
+    public static function getMassivas($where = null, $order = null, $limit = null, $fields = '*', $group = null, $params = [])
     {
-        return (new Database('massivas'))->select($where, $order, $limit, $fields, $group);
+        return (new Database('massivas'))->select($where, $order, $limit, $fields, $group, $params);
     }
 
     public static function getMassivaByNumber($numero)
     {
-        return self::getMassivas('numero =' . $numero)->fetchObject(self::class);
+        return self::getMassivas('numero = :numero', null, null, '*', null, [
+            'numero' => $numero
+        ])->fetchObject(self::class);
     }
+
     public static function getMassivasById($id)
     {
-        return self::getMassivas('id =' . $id)->fetchObject(self::class);
+        return self::getMassivas('id = :id', null, null, '*', null, [
+            'id' => $id
+        ])->fetchObject(self::class);
     }
+
     public static function getMassivasByIdMassiva($id_massiva)
     {
-        return self::getMassivas('id_massiva =' . $id_massiva);
+        return self::getMassivas('id_massiva = :id_massiva', null, null, '*', null, [
+            'id_massiva' => $id_massiva
+        ]);
     }
+
     public function excluir()
     {
-        return (new Database('massivas'))->delete('id =' . $this->id);
-
+        return (new Database('massivas'))->delete('id = ' . $this->id);
     }
 
     public function atualizar()
     {
-        (new Database('massivas'))->update('id =' . $this->id, [
+        (new Database('massivas'))->update('id = ' . $this->id, [
             'protocolo_sz' => $this->protocolo_sz,
             'numero' => $this->numero,
             'id_massiva' => $this->id_massiva,

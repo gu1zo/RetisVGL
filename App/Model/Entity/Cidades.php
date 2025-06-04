@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Model\Entity;
 
 use WilliamCosta\DatabaseManager\Database;
@@ -10,21 +9,24 @@ class Cidades
     public $nome;
     public $massiva;
 
-    public static function getCidades($where = null, $order = null, $limit = null, $fields = '*')
+    public static function getCidades($where = null, $order = null, $limit = null, $fields = '*', $group = null, $params = [])
     {
-        return (new Database('cidades'))->select($where, $order, $limit, $fields);
+        return (new Database('cidades'))->select($where, $order, $limit, $fields, $group, $params);
     }
 
     public static function getCidadesByName($name)
     {
-        return self::getCidades('nome = "' . $name . '"')->fetchObject(self::class);
+        return self::getCidades('nome = :nome', null, null, '*', null, [
+            ':nome' => $name
+        ])->fetchObject(self::class);
     }
 
     public static function getCidadesById($id)
     {
-        return self::getCidades('id = "' . $id . '"')->fetchObject(self::class);
+        return self::getCidades('id = :id', null, null, '*', null, [
+            ':id' => $id
+        ])->fetchObject(self::class);
     }
-
 
     public function cadastrar()
     {
@@ -38,7 +40,7 @@ class Cidades
 
     public function atualizar()
     {
-        return (new Database('cidades'))->update('id =' . $this->id, [
+        return (new Database('cidades'))->update('id = ' . $this->id, [
             'nome' => $this->nome,
             'massiva' => $this->massiva
         ]);

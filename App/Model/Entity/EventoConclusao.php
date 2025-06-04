@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Model\Entity;
 
 use WilliamCosta\DatabaseManager\Database;
@@ -22,13 +21,16 @@ class EventoConclusao
 
         return true;
     }
-    public static function getEventoConclusaoById($id)
+
+    public static function getEventoConclusao($where = null, $order = null, $limit = null, $fields = '*', $params = [])
     {
-        return self::getEventoConclusao('evento_id =' . $id)->fetchObject(self::class);
+        return (new Database('evento_conclusao'))->select($where, $order, $limit, $fields, null, $params);
     }
 
-    public static function getEventoConclusao($where = null, $order = null, $limit = null, $fields = '*')
+    public static function getEventoConclusaoById($id)
     {
-        return (new Database('evento_conclusao'))->select($where, $order, $limit, $fields);
+        return self::getEventoConclusao('evento_id = :id', null, null, '*', [
+            ':id' => $id
+        ])->fetchObject(self::class);
     }
 }

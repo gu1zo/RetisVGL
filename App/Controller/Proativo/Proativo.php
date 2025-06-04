@@ -179,7 +179,6 @@ class Proativo extends Page
         $obProativo->regional = $regional;
         $obProativo->host = $host;
         $obProativo->observacao = $observacao;
-        $obProativo->id_usuario_criador = $obProativoProtocol->id_usuario_criador;
 
 
         $obProativo->atualizar();

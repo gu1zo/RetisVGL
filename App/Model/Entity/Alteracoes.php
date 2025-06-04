@@ -24,22 +24,27 @@ class Alteracoes
         return true;
     }
 
-    public static function getAlteracoes($where = null, $order = null, $limit = null, $fields = '*', $group = null)
+    public static function getAlteracoes($where = null, $order = null, $limit = null, $fields = '*', $group = null, $params = [])
     {
-        return (new Database('alteracoes'))->select($where, $order, $limit, $fields, $group);
+        return (new Database('alteracoes'))->select($where, $order, $limit, $fields, $group, $params);
     }
+
     public static function getAlteracoesByEventoId($id)
     {
-        return self::getAlteracoes('evento_id = "' . $id . '"', 'data ASC');
+        return self::getAlteracoes('evento_id = :evento_id', 'data ASC', null, '*', null, [
+            ':evento_id' => $id
+        ]);
     }
-    public static function getComentarioById($id)
+
+    public static function getAlteracaoById($id)
     {
-        return self::getAlteracoes('id = "' . $id . '"')->fetchObject(self::class);
+        return self::getAlteracoes('id = :id', null, null, '*', null, [
+            ':id' => $id
+        ])->fetchObject(self::class);
     }
 
     public function excluir()
     {
-        return (new Database('alteracoes'))->delete('id =' . $this->id);
-
+        return (new Database('alteracoes'))->delete('id = ' . $this->id);
     }
 }
