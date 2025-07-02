@@ -27,8 +27,7 @@ class Login
         $_SESSION['usuario'] = [
             'id' => $obUser->id,
             'nome' => $obUser->nome,
-            'email' => $obUser->email,
-            'setor' => $obUser->setor,
+            'login' => $obUser->login,
             'privilegio' => $obUser->privilegio
         ];
 
@@ -54,10 +53,10 @@ class Login
         return $_SESSION['usuario']['id'];
     }
 
-    public static function getEmail()
+    public static function getLogin()
     {
         self::init();
-        return $_SESSION['usuario']['email'];
+        return $_SESSION['usuario']['login'];
     }
 
     public static function logout()
