@@ -29,22 +29,16 @@ class Usuario extends Page
         switch ($queryParams['status']) {
             case 'created':
                 return Alert::getSuccess('Usuário criado com sucesso!');
-                break;
             case 'updated':
                 return Alert::getSuccess('Usuário atualizado com sucesso!');
-                break;
             case 'deleted':
                 return Alert::getSuccess('Usuário excluido com sucesso!');
-                break;
             case 'duplicated':
                 return Alert::getError('O e-mail informado já está sendo utilizado por outro usuário.');
-                break;
             case 'passwordError':
                 return Alert::getError('As senhas não são iguais');
-                break;
             case 'no-permission':
                 return Alert::getError('Você não tem permissão');
-                break;
         }
         return '';
     }
@@ -88,71 +82,11 @@ class Usuario extends Page
             $itens .= View::render('/usuario/table/item', [
                 'id' => $obUser->id,
                 'nome' => $obUser->nome,
-                'email' => $obUser->email,
-                'setor' => $obUser->setor,
+                'login' => $obUser->login,
                 'privilegio' => $obUser->privilegio
             ]);
         }
         return $itens;
-    }
-
-    /**
-     * Método responsável por retornar a view do formulário para cadastro de usuário renderuzada
-     * @param Request $request
-     * @return string
-     */
-    public static function getNewUser($request)
-    {
-        $content = View::render('/usuario/form', [
-            'title' => 'Novo Usuário',
-            'nome' => '',
-            'email' => '',
-            'setor' => self::getSetor(),
-            'privilegio' => self::getPrivilegio(),
-            'status' => self::getStatus($request),
-            'buttons' => ''
-        ]);
-
-        return parent::getPage('Novo Usuario > RetisVGL', $content);
-    }
-
-
-    /**
-     * Métido responsável por cadastrar um novo usuário
-     * @param Request $request
-     * @return never
-     */
-    public static function setNewUser($request)
-    {
-
-        $postVars = $request->getPostVars();
-
-        $email = $postVars['email'] ?? '';
-        $nome = $postVars['nome'] ?? '';
-        $senha = bin2hex(random_bytes(32));
-        $setor = $postVars['setor'] ?? '';
-        $privilegio = $postVars['privilegio'] ?? '';
-
-        $obUser = EntityUser::getUserByEmail($email);
-
-        if ($obUser instanceof EntityUser) {
-            $request->getRouter()->redirect('/usuario/novo?status=duplicated');
-            exit;
-        }
-
-
-        $obUser = new EntityUser;
-        $obUser->nome = $nome;
-        $obUser->email = $email;
-        $obUser->setor = $setor;
-        $obUser->privilegio = $privilegio;
-        $obUser->senha = password_hash($senha, PASSWORD_DEFAULT);
-
-        $obUser->cadastrar();
-
-
-        $request->getRouter()->redirect('/usuario/edit?id=' . $obUser->id . '&status=created');
-        exit;
     }
 
     /**
@@ -167,11 +101,9 @@ class Usuario extends Page
         $queryParams = $request->getQueryParams();
         $id = $queryParams['id'];
 
-        $setor = '';
         $privilegio = '';
 
         if (Login::isAdmin()) {
-            $setor = self::getSetor($id);
             $privilegio = self::getPrivilegio($id);
         }
 
@@ -185,24 +117,11 @@ class Usuario extends Page
         $content = View::render('/usuario/form', [
             'title' => 'Editar Usuário',
             'nome' => $obUser->nome,
-            'email' => $obUser->email,
-            'setor' => $setor,
+            'login' => $obUser->login,
             'privilegio' => $privilegio,
             'status' => self::getStatus($request),
-            'buttons' => self::getButtons($request)
         ]);
         return parent::getPage('Editar Usuario > RetisVGL', $content);
-    }
-
-    private static function getButtons($request)
-    {
-        $queryParams = $request->getQueryParams();
-        $id = $queryParams['id'];
-        $obUser = EntityUser::getUserById(Login::getId());
-        if (Login::isLogged() && $id == $obUser->id) {
-            return View::render('usuario/elements/button');
-        }
-        return '';
     }
 
     /**
@@ -235,58 +154,6 @@ class Usuario extends Page
             'normal' => $normal
         ]);
     }
-    private static function getSetor($id = null)
-    {
-        // Carregar setores da variável de ambiente
-        $setores = explode(',', strtolower(getenv('SETORES')));
-        $selectedSetores = array_fill_keys($setores, ''); // Inicializa todos os setores sem seleção
-
-        $default = 'selected'; // Seleção padrão
-
-        if (isset($id)) {
-            $obUser = EntityUser::getUserById($id);
-            if ($obUser instanceof EntityUser) {
-                $setor = $obUser->setor;
-                $setor = strtolower($setor);
-                $default = '';
-                if (array_key_exists($setor, $selectedSetores)) {
-                    $selectedSetores[$setor] = 'selected';
-                }
-            }
-        }
-
-        // Preparar os dados para renderizar a visão
-        $data = ['default' => $default];
-        foreach ($selectedSetores as $setor => $selected) {
-            $data[$setor] = $selected;
-        }
-        $content = View::render('usuario/elements/select', [
-            'itens' => self::getSetorItens()
-        ]);
-
-        return View::render('usuario/elements/setor', [
-            'select' => StringManipulation::processTemplate($content, $data)
-        ]);
-    }
-
-
-    /**
-     * Método responsável por renderizar as opções do select do setor
-     * @return string
-     */
-    private static function getSetorItens()
-    {
-        $item = '';
-        $setores = explode(',', getenv('SETORES'));
-        foreach ($setores as $k) {
-            $item .= View::render('usuario/elements/item', [
-                'setor' => strtoupper($k)
-            ]);
-        }
-        return $item;
-    }
-
-
     /**
      * Método responsável por realizar a atualização do usuário
      * @param Request $request
@@ -307,11 +174,10 @@ class Usuario extends Page
 
         $postVars = $request->getPostVars();
         $nome = $postVars['nome'] ?? $obUser->nome;
-        $email = $postVars['email'] ?? $obUser->email;
-        $setor = $postVars['setor'] ?? $obUser->setor;
+        $login = $postVars['login'] ?? $obUser->login;
         $privilegio = $postVars['privilegio'] ?? $obUser->privilegio;
 
-        $obUserEmail = EntityUser::getUserByEmail($email);
+        $obUserEmail = EntityUser::getUserByLogin($login);
 
         if (isset($obUserEmail->id)) {
             if (($obUser instanceof EntityUser) && ($id != $obUserEmail->id)) {
@@ -322,8 +188,7 @@ class Usuario extends Page
         //Atualização da instancia
 
         $obUser->nome = $nome;
-        $obUser->email = $email;
-        $obUser->setor = $setor;
+        $obUser->login = $login;
         $obUser->privilegio = $privilegio;
 
 
@@ -336,55 +201,4 @@ class Usuario extends Page
         $request->getRouter()->redirect('/usuario/edit?id=' . $id . '&status=updated');
         exit;
     }
-
-
-    /**
-     * Método responsável por retornar a view com o formulário de remoção do usuário
-     * @param Request $request
-     * @return string
-     */
-    public static function getDeleteUser($request)
-    {
-        $queryParams = $request->getQueryParams();
-        $id = $queryParams['id'];
-
-
-        $obUser = EntityUser::getUserById($id);
-
-        if (!$obUser instanceof EntityUser) {
-            $request->getRouter()->redirect('usuario');
-            exit;
-        }
-
-        $content = View::render('usuario/delete', [
-            'nome' => $obUser->nome,
-            'email' => $obUser->email
-        ]);
-
-        //Retorna a página
-        return parent::getPage('Excluir usuário > RetisVGL', $content);
-    }
-
-
-    /**
-     * Método responsável por realizar a remoção do usuário do banco de Ddados
-     * @param Request $request
-     * @return never
-     */
-    public static function setDeleteUser($request)
-    {
-        $queryParams = $request->getQueryParams();
-        $id = $queryParams['id'];
-        $obUser = EntityUser::getUserById($id);
-
-        if (!$obUser instanceof EntityUser) {
-            $request->getRouter()->redirect('/usuario');
-            exit;
-        }
-        $obUser->excluir();
-
-        $request->getRouter()->redirect('/usuario?status=deleted');
-        exit;
-    }
-
 }

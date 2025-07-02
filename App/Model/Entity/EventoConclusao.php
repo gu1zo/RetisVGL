@@ -22,14 +22,14 @@ class EventoConclusao
         return true;
     }
 
-    public static function getEventoConclusao($where = null, $order = null, $limit = null, $fields = '*', $params = [])
+    public static function getEventoConclusao($where = null, $order = null, $limit = null, $fields = '*', $group = null, $params = [])
     {
-        return (new Database('evento_conclusao'))->select($where, $order, $limit, $fields, null, $params);
+        return (new Database('evento_conclusao'))->select($where, $order, $limit, $fields, $group, $params);
     }
 
     public static function getEventoConclusaoById($id)
     {
-        return self::getEventoConclusao('evento_id = :id', null, null, '*', [
+        return self::getEventoConclusao('evento_id = :id', null, null, '*', null,[
             ':id' => $id
         ])->fetchObject(self::class);
     }
