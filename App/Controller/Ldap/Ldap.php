@@ -35,7 +35,7 @@ class Ldap
 
         $ldap_user = $instance->domain . "\\" . $login;
 
-        if (!ldap_bind($ldap_conn, $ldap_user, $pass)) {
+        if (!@ldap_bind($ldap_conn, $ldap_user, $pass)) {
             ldap_unbind($ldap_conn);  // ainda que falhe, faz unbind para segurança
             return false;
         }
@@ -51,7 +51,7 @@ class Ldap
         $ldap_conn = ldap_connect($instance->uri);
 
         ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
-        if (!ldap_bind($ldap_conn, $instance->login, $instance->pass)) {
+        if (!@ldap_bind($ldap_conn, $instance->login, $instance->pass)) {
             die("Falha na autenticação LDAP");
         }
 
