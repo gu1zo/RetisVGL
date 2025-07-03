@@ -16,6 +16,7 @@ class User
     public $setor;
     public $email;
     public $senha;
+    public $recovery_token;
 
     public static function getUserByLogin($login)
     {
