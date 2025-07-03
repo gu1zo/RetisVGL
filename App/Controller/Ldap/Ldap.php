@@ -51,6 +51,8 @@ class Ldap
         $ldap_conn = ldap_connect($instance->uri);
 
         ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
+        ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
+
         if (!@ldap_bind($ldap_conn, $instance->login, $instance->pass)) {
             die("Falha na autenticação LDAP");
         }
