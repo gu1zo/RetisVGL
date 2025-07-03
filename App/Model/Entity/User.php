@@ -15,6 +15,7 @@ class User
     public $privilegio;
     public $setor;
     public $email;
+    public $senha;
 
     public static function getUserByLogin($login)
     {
