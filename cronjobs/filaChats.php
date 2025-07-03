@@ -16,8 +16,8 @@ $qtd = EntityFila::getMassivas(null, 'id ASC', $limite, 'COUNT(*) as qtd')->fetc
 if ($qtd > 0) {
     while ($obFila = $results->fetchObject(EntityFila::class)) {
         $cpf_cnpj_limpo = preg_replace('/[\.\-\/]/', '', $obFila->cpf_cnpj);
-        $codocop = "EXMM1DP8T2";
-        $codocop = strlen($cpf_cnpj_limpo) === 11 ? "EXMM1DP8T2" : "EXMM1F5GL0";
+        $codocop = getenv('CODOCOP_CPF');
+        $codocop = strlen($cpf_cnpj_limpo) === 11 ? getenv('CODOCOP_CPF') : getenv('CODOCOP_CNPJ');
 
         $codoco = APIElite::abreAtendimento($obFila->codsercli, $obFila->protocolo_sz, $obFila->nome, $obFila->numero, $codocop);
         APIElite::fechaAtendimento($codoco, $codocop);
