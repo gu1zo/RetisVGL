@@ -14,15 +14,14 @@ class User
 
     public $privilegio;
 
-
     public static function getUserByLogin($login)
     {
-        return (new Database('usuarios_ldap'))->select('login = "' . $login . '"')->fetchObject(self::class);
+        return (new Database('usuarios'))->select('login = "' . $login . '"')->fetchObject(self::class);
     }
 
     public static function getUsers($where = null, $order = null, $limit = null, $fields = '*', $params = [])
     {
-        return (new Database('usuarios_ldap'))->select($where, $order, $limit, $fields, null, $params);
+        return (new Database('usuarios'))->select($where, $order, $limit, $fields, null, $params);
     }
 
     public static function getUserById($id)
@@ -35,7 +34,7 @@ class User
 
     public function cadastrar()
     {
-        $this->id = (new Database('usuarios_ldap'))->insert([
+        $this->id = (new Database('usuarios'))->insert([
             'nome' => $this->nome,
             'login' => $this->login,
         ]);
@@ -45,7 +44,7 @@ class User
 
     public function atualizar()
     {
-        return (new Database('usuarios_ldap'))->update('id =' . $this->id, [
+        return (new Database('usuarios'))->update('id =' . $this->id, [
             'nome' => $this->nome,
             'login' => $this->login,
             'privilegio' => $this->privilegio
@@ -56,7 +55,7 @@ class User
 
     public function excluir()
     {
-        return (new Database('usuarios_ldap'))->delete('id =' . $this->id);
+        return (new Database('usuarios'))->delete('id =' . $this->id);
 
     }
 }
