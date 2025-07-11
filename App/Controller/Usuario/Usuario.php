@@ -175,7 +175,6 @@ class Usuario extends Page
         }
 
         $postVars = $request->getPostVars();
-        $nome = $postVars['nome'] ?? $obUser->nome;
         $login = $postVars['login'] ?? $obUser->login;
         $privilegio = $postVars['privilegio'] ?? $obUser->privilegio;
 
@@ -187,10 +186,6 @@ class Usuario extends Page
                 exit;
             }
         }
-        //Atualização da instancia
-
-        $obUser->nome = $nome;
-        $obUser->login = $login;
         $obUser->privilegio = $privilegio;
 
 

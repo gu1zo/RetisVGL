@@ -17,6 +17,7 @@ class User
     public $email;
     public $senha;
     public $recovery_token;
+    public $ldap;
 
     public static function getUserByLogin($login)
     {
@@ -41,6 +42,8 @@ class User
         $this->id = (new Database('usuarios'))->insert([
             'nome' => $this->nome,
             'login' => $this->login,
+            'privilegio' => $this->privilegio,
+            'ldap' => $this->ldap
         ]);
 
         return true;
@@ -51,7 +54,8 @@ class User
         return (new Database('usuarios'))->update('id =' . $this->id, [
             'nome' => $this->nome,
             'login' => $this->login,
-            'privilegio' => $this->privilegio
+            'privilegio' => $this->privilegio,
+            'ldap' => $this->ldap
         ]);
     }
 

@@ -41,8 +41,9 @@ class Login extends Page
             $request->getRouter()->redirect('/login?status=invalid');
             exit;
         }
+        $ldap = $obUser->ldap;
         //Cria a sessão de login
-        if (!Ldap::login($login, $senha)) {
+        if (!Ldap::login($login, $senha, $ldap)) {
             $request->getRouter()->redirect('/login?status=invalid');
             exit;
         }
