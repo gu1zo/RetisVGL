@@ -6,12 +6,14 @@ class APIFortics
     private $url;
     private $user;
     private $pass;
+    private $channel;
 
     public function __construct()
     {
         $this->url = getenv('API_URL_SZ');
         $this->user = getenv('API_USER_SZ');
         $this->pass = getenv('API_PASS_SZ');
+        $this->channel = getenv('API_CHANNEL_SZ');
     }
 
     public static function getToken()
@@ -85,7 +87,7 @@ class APIFortics
         $data = [
             "platform_id" => $numero,
             "type" => "text",
-            "channel_id" => "647f2d69971cd900180bbd8c",
+            "channel_id" => $instance->channel,
             "message" => $message,
             "close_session" => $close_session
         ];

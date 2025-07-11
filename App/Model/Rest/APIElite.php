@@ -7,12 +7,20 @@ class APIElite
     private $url;
     private $user;
     private $pass;
+    private $codmvis;
+    private $codmfo;
+    private $codcar;
+    private $codusu;
 
     public function __construct()
     {
         $this->url = getenv('API_URL');
         $this->user = getenv('API_USER');
         $this->pass = getenv('API_PASS');
+        $this->codmvis = getenv('CODMVIS');
+        $this->codmfo = getenv('CODMFO');
+        $this->codcar = getenv('CODCAR');
+        $this->codusu = getenv('CODUSU');
     }
 
     /**
@@ -109,14 +117,14 @@ class APIElite
                     "_passwd" => $instance->pass,
                     "codcli" => $codcli,
                     "codsercli" => $codsercli,
-                    "codmvis" => "LI5M0YTCLC",
+                    "codmvis" => $instance->codmvis,
                     "codocop" => $codocop,
                     "coddep" => "01WX0Y8WCF",
                     "date" => $dataDeHoje,
                     "time" => $horario,
                     "end-date" => $dataDeHoje,
-                    "codusu" => "LQ",
-                    "codcar" => "MF470I0V9X",
+                    "codusu" => $instance->codusu,
+                    "codcar" => $instance->codcar,
                     "descri_oco" => "Atendimento pelo SZ.CHAT - Protocolo: " . $protocolo . " - Nome: " . $nome . " - Telefone: " . $numero
                 ]
             ]
@@ -147,7 +155,7 @@ class APIElite
                     "codsto" => "01CONCLUID",
                     "codvis" => "EXML0CZOSI",
                     "codocop_sol" => $codocop,
-                    "motivo_fechamento" => "LIUP0ZJ57F",
+                    "motivo_fechamento" => $instance->codmfo,
                     "descri_oco_sol" => "Atendimento realizado pela IA sem passar pelo CSA",
                     "hora_sol" => $horario,
                     "data_sol" => $dataDeHoje,
@@ -156,7 +164,7 @@ class APIElite
                     "email_resposta" => "suporte@elitesoft.com.br",
                     "assunto" => "teste",
                     "conteudo_mail" => "testettt teste",
-                    "codusu" => "LQ"
+                    "codusu" => $instance->codusu
                 ]
             ]
         ];
