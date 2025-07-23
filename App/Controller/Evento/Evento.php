@@ -1047,7 +1047,7 @@ class Evento extends Page
 
         $obEvento = EntityEvento::getEventoById($id);
 
-        $results = EntityFilaEmails::getEmailsByProtcol($obEvento->protocolo);
+        $results = EntityFilaEmails::getEmailsByProtocol($obEvento->protocolo);
         while ($obFilaEmails = $results->fetchObject(EntityFilaEmails::class)) {
             $data = !is_null($obFilaEmails->enviado_em) ?
                 (new DateTime($obFilaEmails->enviado_em))->format('d/m/Y H:i:s') : '-';
