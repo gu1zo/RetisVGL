@@ -900,7 +900,7 @@ class Evento extends Page
         foreach ($clientes as $k) {
             $obFilaEmails->protocolo = $obEvento->protocolo;
             $obFilaEmails->tipo = $tipo;
-            $obFilaEmails->vars = $postVars;
+            $obFilaEmails->vars = $vars;
             $obFilaEmails->cliente_email = $k['e_mail'];
             $obFilaEmails->cliente_nome = $k['nome'];
             $obFilaEmails->cadastrar();
