@@ -160,10 +160,6 @@ class APIElite
                     "hora_sol" => $horario,
                     "data_sol" => $dataDeHoje,
                     "enviar_email" => "N",
-                    "e_mail_sender" => "financeiro@gegnet.com.br",
-                    "email_resposta" => "suporte@elitesoft.com.br",
-                    "assunto" => "teste",
-                    "conteudo_mail" => "testettt teste",
                     "codusu" => $instance->codusu
                 ]
             ]
