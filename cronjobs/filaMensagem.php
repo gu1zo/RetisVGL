@@ -9,7 +9,7 @@ use DateTimeZone;
 
 function documentaChats()
 {
-    $results = EntityFila::getMassivas(null, 'id ASC');
+    $results = EntityFila::getMassivasMensagem(0);
 
     // Verifica se há algum resultado
     if (!$results || $results->rowCount() === 0) {
@@ -52,10 +52,15 @@ function processBatch(array $batch, string $token, string $mensagem)
 
     foreach ($batch as $item) {
         APIFortics::sendMessageAtt($item->numero, $mensagem, $multiHandle, $curlHandles, $token, true);
+
+        // Marca como enviado após agendar o envio
+        $item->enviado = 1;
+        $item->atualizar(); // Crie esse método no EntityFila se não existir
     }
 
     APIFortics::executeBatchRequests($multiHandle, $curlHandles);
 }
+
 
 // Executa o envio e só exibe log se houver envio real
 if (documentaChats()) {

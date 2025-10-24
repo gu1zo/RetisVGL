@@ -12,6 +12,7 @@ class Fila
     public $protocolo_sz;
     public $numero;
     public $cpf_cnpj;
+    public $enviado;
 
     public function cadastrar()
     {
@@ -31,11 +32,23 @@ class Fila
         return (new Database('fila'))->select($where, $order, $limit, $fields, $group, $params);
     }
 
+    public static function getMassivasMensagem($enviado)
+    {
+        return self::getMassivas('enviado = 0');
+    }
+
     public static function getMassivaByNumber($numero)
     {
         return self::getMassivas('numero = :numero', null, null, '*', null, [
             ':numero' => $numero
         ])->fetchObject(self::class);
+    }
+
+    public function atualizar()
+    {
+        return (new Database('fila'))->update('id = ' . $this->id, [
+            'enviado' => $this->enviado
+        ]);
     }
 
     public function excluir()
