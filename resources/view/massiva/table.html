@@ -44,75 +44,6 @@
 </div>
 <div
   class="modal modal-lg fade"
-  id="atualizacao"
-  tabindex="-1"
-  aria-hidden="true"
->
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5">Atualização</h1>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-        ></button>
-      </div>
-      <div class="modal-body">
-        <form action="{{URL}}/massiva/atualizar" method="post">
-          <div class="form-group mb-3 w-75 mx-auto">
-            <div class="row">
-              <div class="col-md-10">
-                <label class="form-label">ID Massiva</label>
-                <select
-                  class="form-select shadow w-100"
-                  name="massivas[]"
-                  id="massivas"
-                ></select>
-              </div>
-              <div class="col-md-2">
-                <label for="enviarTodos" class="form-label">Todos</label>
-                <div class="form-check form-switch text-center">
-                  <input
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="bottom"
-                    data-bs-html="true"
-                    title="ON = Envia para todos <br>OFF = Envia apenas para quem não recebeu atualização"
-                    class="form-check-input"
-                    type="checkbox"
-                    id="enviarTodos"
-                    name="todos"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="form-group mb-3 w-75 mx-auto text-center">
-            <label for="comentario" class="form-label">Atualização:</label>
-            <textarea
-              name="mensagem"
-              id="mensagem"
-              class="form-control shadow"
-              placeholder="Escreva aqui a mensagem de atualização"
-              style="min-height: 300px"
-            ></textarea>
-            <button
-              type="submit"
-              class="shadow btn btn-outline-success mt-3"
-              data-bs-toggle="modal"
-              data-bs-target="#atualizacao"
-            >
-              <i class="bi bi-check"></i>Executar
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-<div
-  class="modal modal-lg fade"
   id="finalizar"
   tabindex="-1"
   aria-hidden="true"
@@ -138,6 +69,96 @@
             ></select>
           </div>
           <div class="form-group mb-3 w-75 mx-auto text-center">
+            <button
+              type="submit"
+              class="shadow btn btn-outline-success mt-3"
+              data-bs-toggle="modal"
+              data-bs-target="#atualizacao"
+            >
+              <i class="bi bi-check"></i>Executar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  class="modal modal-lg fade"
+  id="atualizacao"
+  tabindex="-1"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5">Enviar Imagem</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- IMPORTANTE: enctype="multipart/form-data" é obrigatório para envio de imagem -->
+        <form
+          action="{{URL}}/massiva/atualizar"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          <!-- Seleção de Massiva -->
+          <div class="form-group mb-3 w-75 mx-auto">
+            <div class="row">
+              <div class="col-md-10">
+                <label for="massivas" class="form-label">ID Massiva</label>
+                <select
+                  class="form-select shadow w-100"
+                  name="massivas[]"
+                  id="massivas"
+                  required
+                ></select>
+              </div>
+
+              <div class="col-md-2">
+                <label for="enviarTodos" class="form-label">Todos</label>
+                <div class="form-check form-switch text-center">
+                  <input
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="bottom"
+                    data-bs-html="true"
+                    title="ON = Envia para todos <br>OFF = Envia apenas para quem não recebeu atualização"
+                    class="form-check-input"
+                    type="checkbox"
+                    id="enviarTodos"
+                    name="todos"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upload de Imagem -->
+          <div class="form-group mb-3 w-75 mx-auto text-center">
+            <label for="imagemUpload" class="form-label">Imagem:</label>
+            <input
+              type="file"
+              class="form-control"
+              id="imagemUpload"
+              name="imagem"
+              accept="image/*"
+            />
+          </div>
+
+          <div class="form-group mb-3 w-75 mx-auto text-center">
+            <label for="comentario" class="form-label">Atualização:</label>
+            <textarea
+              name="mensagem"
+              id="mensagem"
+              class="form-control shadow"
+              placeholder="Escreva aqui a mensagem de atualização"
+              style="min-height: 300px"
+            ></textarea>
             <button
               type="submit"
               class="shadow btn btn-outline-success mt-3"

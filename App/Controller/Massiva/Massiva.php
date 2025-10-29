@@ -143,11 +143,56 @@ class Massiva extends Page
     public static function atualizaChats($request)
     {
         $postVars = $request->getPostVars();
-        $mensagem = $postVars['mensagem'];
-        $massivas = $postVars['massivas'];
+        $files = $_FILES;
+        $mensagem = $postVars['mensagem'] ?? '';
+        $massivas = $postVars['massivas'] ?? [];
         $todos = isset($postVars['todos']);
 
-        // Inicializa Multi cURL
+        // ===== Configurações de upload =====
+        $uploadDir = '/var/www/html/resources/img/tmp/'; // ajuste se o seu docroot for diferente
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+
+        $imagemCaminho = null;
+
+        // Validar e mover upload se existir
+        if (isset($files['imagem']) && $files['imagem']['error'] === UPLOAD_ERR_OK) {
+            $tmpName = $files['imagem']['tmp_name'];
+            $origName = $files['imagem']['name'];
+            $size = $files['imagem']['size'];
+            $mime = mime_content_type($tmpName);
+
+            // validações básicas
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            $maxSize = 5 * 1024 * 1024; // 5 MB, ajuste se quiser
+
+            if (!in_array($mime, $allowedMimes)) {
+                // trate erro conforme seu fluxo (ex: redirect com erro)
+                $request->getRouter()->redirect('/massiva?status=erro_tipo_imagem');
+                exit;
+            }
+            if ($size > $maxSize) {
+                $request->getRouter()->redirect('/massiva?status=erro_tamanho_imagem');
+                exit;
+            }
+
+            $ext = pathinfo($origName, PATHINFO_EXTENSION);
+            $uniqueName = uniqid('img_', true) . '.' . strtolower($ext);
+            $destino = rtrim($uploadDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $uniqueName;
+
+            if (!move_uploaded_file($tmpName, $destino)) {
+                $request->getRouter()->redirect('/massiva?status=erro_upload');
+                exit;
+            }
+
+            // opcional: ajustar permissões para leitura pública
+            @chmod($destino, 0644);
+
+            $imagemCaminho = $destino;
+        }
+
+        // ===== Preparar envio multi-cURL =====
         $multiHandle = curl_multi_init();
         $curlHandles = [];
         $token = APIFortics::getToken();
@@ -155,19 +200,30 @@ class Massiva extends Page
         foreach ($massivas as $k) {
             $results = EntityMassiva::getMassivasByIdMassiva($k);
             while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
-                if ($todos) {
-                    APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles, $token);
-                    $obMassiva->avisado = 1;
-                    $obMassiva->atualizar();
-                } else if ($obMassiva->avisado == 0) {
-                    APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles, $token);
+                $deveEnviar = $todos || $obMassiva->avisado == 0;
+
+                if ($deveEnviar) {
+                    APIFortics::sendMessageAtt(
+                        $obMassiva->numero,
+                        $mensagem,
+                        $multiHandle,
+                        $curlHandles,
+                        $token,
+                        $imagemCaminho // pode ser null
+                    );
+
                     $obMassiva->avisado = 1;
                     $obMassiva->atualizar();
                 }
             }
         }
-        // Executa todas as requisições ao mesmo tempo
+
+        // Executa todas as requisições
         APIFortics::executeBatchRequests($multiHandle, $curlHandles);
+
+        if ($imagemCaminho && file_exists($imagemCaminho)) {
+            @unlink($imagemCaminho);
+        }
 
         $request->getRouter()->redirect('/massiva?status=atualizado');
         exit;

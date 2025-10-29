@@ -7,6 +7,7 @@ class APIFortics
     private $user;
     private $pass;
     private $channel;
+    private $IP;
 
     public function __construct()
     {
@@ -14,6 +15,7 @@ class APIFortics
         $this->user = getenv('API_USER_SZ');
         $this->pass = getenv('API_PASS_SZ');
         $this->channel = getenv('API_CHANNEL_SZ');
+        $this->IP = getenv('PRIVATE_IP');
     }
 
     public static function getToken()
@@ -77,37 +79,51 @@ class APIFortics
         $responseData = json_decode($response, true);
         return $responseData['data'][0]['_id'] ?? 'ID não encontrado';
     }
-    public static function sendMessageAtt($numero, $message, &$multiHandle, &$curlHandles, $token, $end = false)
+    // APIFortics::sendMessageAtt (atualizada)
+    public static function sendMessageAtt($numero, $message, &$multiHandle, &$curlHandles, $token, $imagemCaminho = null, $end = false)
     {
         $instance = new self();
-        $close_session = 0;
-        if ($end) {
-            $close_session = 1;
-        }
+        $close_session = $end ? 1 : 0;
+
         $data = [
             "platform_id" => $numero,
-            "type" => "text",
             "channel_id" => $instance->channel,
-            "message" => $message,
-            "close_session" => $close_session
+            "close_session" => $close_session,
         ];
+
+        if (!empty($imagemCaminho) && file_exists($imagemCaminho)) {
+            // Se houver imagem, envia como media
+            $basename = basename($imagemCaminho);
+            $fileUrl = 'http://' . $instance->IP . '/resources/img/tmp/' . $basename;
+
+            $data["type"] = "media";
+            $data["file"] = $fileUrl;
+            $data["legend"] = $message; // legenda da imagem
+        } else {
+            // Somente mensagem
+            $data["type"] = "text";
+            $data["message"] = $message;
+        }
+
         $url = $instance->url . '/message/send';
 
-        // Inicializa uma nova requisição cURL
         $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'User-Agent: APIElite/1.0',
-            'Authorization: Bearer ' . $token
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'User-Agent: APIElite/1.0',
+                'Authorization: Bearer ' . $token
+            ],
+            CURLOPT_POSTFIELDS => json_encode($data)
         ]);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
 
-        // Adiciona ao Multi cURL
         curl_multi_add_handle($multiHandle, $ch);
         $curlHandles[] = $ch;
     }
+
+
 
     // Nova função para executar todas as requisições
     public static function executeBatchRequests(&$multiHandle, &$curlHandles)
