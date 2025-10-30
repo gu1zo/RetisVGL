@@ -83,7 +83,7 @@ class APIFortics
     public static function sendMessageAtt($numero, $message, &$multiHandle, &$curlHandles, $token, $imagemCaminho = null, $end = false)
     {
         $instance = new self();
-        $close_session = $end ? 1 : 0;
+        $close_session = $end == true ? 1 : 0;
 
         $data = [
             "platform_id" => $numero,
