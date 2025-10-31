@@ -80,10 +80,9 @@ class APIFortics
     public static function sendMessageAtt($numero, $message, &$multiHandle, &$curlHandles, $token, $end = false)
     {
         $instance = new self();
-        $close_session = 0;
-        if ($end) {
-            $close_session = 1;
-        }
+
+        $close_session = $end ? 1 : 0;
+
         $data = [
             "platform_id" => $numero,
             "type" => "text",
@@ -91,23 +90,34 @@ class APIFortics
             "message" => $message,
             "close_session" => $close_session
         ];
+
         $url = $instance->url . '/message/send';
 
         // Inicializa uma nova requisição cURL
         $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'User-Agent: APIElite/1.0',
-            'Authorization: Bearer ' . $token
+
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'User-Agent: APIElite/1.0',
+                'Authorization: Bearer ' . $token
+            ],
+            CURLOPT_POSTFIELDS => json_encode($data),
+
+            // ✅ Timeouts e controle de rede
+            CURLOPT_TIMEOUT => 30,           // Tempo máximo total de execução (em segundos)
+            CURLOPT_CONNECTTIMEOUT => 10,    // Tempo máximo para conectar
+            CURLOPT_TIMEOUT_MS => 30000,     // redundância (30s)
+            CURLOPT_NOSIGNAL => true,        // evita erros em ambientes multi-thread
         ]);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
 
         // Adiciona ao Multi cURL
         curl_multi_add_handle($multiHandle, $ch);
         $curlHandles[] = $ch;
     }
+
 
     // Nova função para executar todas as requisições
     public static function executeBatchRequests(&$multiHandle, &$curlHandles)
@@ -116,22 +126,34 @@ class APIFortics
             return;
         }
 
-        // Executa todas as requisições em paralelo
+        $active = null;
+
+        // Executa as requisições em paralelo
         do {
             $status = curl_multi_exec($multiHandle, $active);
+            if ($status > CURLM_OK) {
+                break; // erro interno do cURL
+            }
+
+            // Aguarda atividade nas conexões (evita uso excessivo de CPU)
+            if ($active) {
+                curl_multi_select($multiHandle);
+            }
         } while ($active && $status == CURLM_OK);
 
         // Fecha e remove as conexões
         foreach ($curlHandles as $ch) {
             curl_multi_remove_handle($multiHandle, $ch);
             curl_close($ch);
+            unset($ch);
         }
 
-        // Limpa os handlers
+        // Limpa handlers
         $curlHandles = [];
         curl_multi_close($multiHandle);
         $multiHandle = null;
     }
+
     public static function getAllMessages()
     {
         $instance = new self();
