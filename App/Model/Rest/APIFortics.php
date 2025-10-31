@@ -107,7 +107,6 @@ class APIFortics
             $data["type"] = "text";
             $data["message"] = $message;
         }
-
         $url = $instance->url . '/message/send';
 
         $ch = curl_init($url);

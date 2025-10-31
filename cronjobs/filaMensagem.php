@@ -51,7 +51,7 @@ function processBatch(array $batch, string $token, string $mensagem)
     $curlHandles = [];
 
     foreach ($batch as $item) {
-        APIFortics::sendMessageAtt($item->numero, $mensagem, $multiHandle, $curlHandles, $token, true);
+        APIFortics::sendMessageAtt($item->numero, $mensagem, $multiHandle, $curlHandles, $token, null, true);
 
         // Marca como enviado após agendar o envio
         $item->enviado = 1;
