@@ -143,18 +143,18 @@ class Massiva extends Page
     public static function atualizaChats($request)
     {
         $postVars = $request->getPostVars();
-        $mensagem = $postVars['mensagem'];
-        $massivas = $postVars['massivas'];
+        $mensagem = $postVars['mensagem'] ?? '';
+        $massivas = $postVars['massivas'] ?? [];
         $todos = isset($postVars['todos']);
         $token = APIFortics::getToken();
 
-        if (empty($massivas) || empty($mensagem) || !$token) {
+        if (empty($mensagem) || empty($massivas) || !$token) {
             $request->getRouter()->redirect('/massiva?status=erro');
             exit;
         }
 
-        // Define o tamanho de cada lote
-        $batchSize = 100;
+        // Quantidade máxima de envios simultâneos por lote
+        $batchSize = 80;
         $chunks = array_chunk($massivas, $batchSize);
 
         foreach ($chunks as $chunkIndex => $chunk) {
@@ -166,29 +166,27 @@ class Massiva extends Page
 
                 while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
                     if ($todos || $obMassiva->avisado == 0) {
-                        // Envia a mensagem e adiciona ao multi-handle
                         APIFortics::sendMessageAtt($obMassiva->numero, $mensagem, $multiHandle, $curlHandles, $token);
-
-                        // Atualiza o status da massiva
                         $obMassiva->avisado = 1;
                         $obMassiva->atualizar();
                     }
                 }
             }
 
-            // Executa todas as requisições do lote em paralelo
+            // Executa todas as requisições do lote
             APIFortics::executeBatchRequests($multiHandle, $curlHandles);
 
             // Libera memória
             unset($curlHandles, $multiHandle);
 
-            // Pequena pausa entre os lotes (para evitar bloqueio da API)
-            usleep(500000); // 0.5 segundo
+            // Espera meio segundo entre os lotes (evita bloqueio da API)
+            usleep(500000);
         }
 
         $request->getRouter()->redirect('/massiva?status=atualizado');
         exit;
     }
+
 
 
     public static function finalizaChats($request)

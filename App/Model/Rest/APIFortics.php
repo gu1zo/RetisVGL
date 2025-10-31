@@ -81,19 +81,16 @@ class APIFortics
     {
         $instance = new self();
 
-        $close_session = $end ? 1 : 0;
-
         $data = [
             "platform_id" => $numero,
             "type" => "text",
             "channel_id" => $instance->channel,
             "message" => $message,
-            "close_session" => $close_session
+            "close_session" => $end ? 1 : 0
         ];
 
         $url = $instance->url . '/message/send';
 
-        // Inicializa uma nova requisição cURL
         $ch = curl_init($url);
 
         curl_setopt_array($ch, [
@@ -106,17 +103,17 @@ class APIFortics
             ],
             CURLOPT_POSTFIELDS => json_encode($data),
 
-            // ✅ Timeouts e controle de rede
-            CURLOPT_TIMEOUT => 30,           // Tempo máximo total de execução (em segundos)
-            CURLOPT_CONNECTTIMEOUT => 10,    // Tempo máximo para conectar
-            CURLOPT_TIMEOUT_MS => 30000,     // redundância (30s)
-            CURLOPT_NOSIGNAL => true,        // evita erros em ambientes multi-thread
+            // Timeouts e estabilidade
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_NOSIGNAL => true,
         ]);
 
         // Adiciona ao Multi cURL
         curl_multi_add_handle($multiHandle, $ch);
         $curlHandles[] = $ch;
     }
+
 
 
     // Nova função para executar todas as requisições
@@ -127,32 +124,39 @@ class APIFortics
         }
 
         $active = null;
+        $status = null;
 
-        // Executa as requisições em paralelo
+        // Loop principal de execução
         do {
             $status = curl_multi_exec($multiHandle, $active);
-            if ($status > CURLM_OK) {
-                break; // erro interno do cURL
-            }
-
-            // Aguarda atividade nas conexões (evita uso excessivo de CPU)
             if ($active) {
-                curl_multi_select($multiHandle);
+                // Espera até que haja atividade para evitar travamentos
+                curl_multi_select($multiHandle, 1.0);
             }
         } while ($active && $status == CURLM_OK);
 
-        // Fecha e remove as conexões
+        // Opcional: capturar respostas e erros (debug)
         foreach ($curlHandles as $ch) {
+            $response = curl_multi_getcontent($ch);
+            $error = curl_error($ch);
+
+            if ($error) {
+                error_log("Erro cURL: " . $error);
+            } elseif (!empty($response)) {
+                // Você pode armazenar/logar as respostas se quiser
+                // error_log("Resposta: " . $response);
+            }
+
             curl_multi_remove_handle($multiHandle, $ch);
             curl_close($ch);
             unset($ch);
         }
 
-        // Limpa handlers
         $curlHandles = [];
         curl_multi_close($multiHandle);
         $multiHandle = null;
     }
+
 
     public static function getAllMessages()
     {
