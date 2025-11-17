@@ -72,36 +72,74 @@ class Ajax
 
     public static function getEvents($request)
     {
-        // Inicializar resultados
-        $results = [];
-
         // Obter os parâmetros da query
         $queryParams = $request->getQueryParams();
-        $status = $queryParams['status'];
 
-        // Parâmetros para paginação e pesquisa
-        $paginaAtual = $queryParams['start'] ?? 0;  // 'start' é o índice da primeira linha da página
-        $length = $queryParams['length'] ?? 10;    // 'length' é a quantidade de itens por página
-        $search = $queryParams['search'] ?? '';  // 'search.value' é o termo de busca
+        $status = $queryParams['status'] ?? null;
+        $start = isset($queryParams['start']) ? (int) $queryParams['start'] : 0;
+        $length = isset($queryParams['length']) ? (int) $queryParams['length'] : 10;
+        $draw = isset($queryParams['draw']) ? (int) $queryParams['draw'] : 1;
+        $search = $queryParams['search'] ?? '';
 
-        // Montar o filtro de busca
-        $where = null;
-        if ($status != 'todos') {
-            $where = 'status ="' . $status . '"';
+        /**
+         * ------------------------------
+         *  FILTRO (status + busca)
+         * ------------------------------
+         */
+        $whereParts = [];
+
+        // Filtro de status (exceto 'todos')
+        if (!empty($status) && $status !== 'todos') {
+            $whereParts[] = 'status = "' . addslashes($status) . '"';
         }
+
+        // Filtro de busca
         if (!empty($search)) {
-            $where = 'protocolo LIKE "%' . addslashes($search) . '%"';
+            $whereParts[] = 'protocolo LIKE "%' . addslashes($search) . '%"';
         }
 
-        // Obter o total de registros com o filtro
-        $quantidadetotal = EntityEvento::getEvento($where, null, null, 'COUNT(*) as qtd')->fetchObject()->qtd;
+        $where = $whereParts ? implode(' AND ', $whereParts) : null;
 
-        // Configuração da paginação
-        $obPagination = new Pagination($quantidadetotal, $paginaAtual, $length); // Paginação ajustada
+        /**
+         * ------------------------------
+         *  PAGINAÇÃO REAL
+         * ------------------------------
+         * O DataTables envia:
+         *   start = offset
+         *   length = quantidade por página
+         * Precisamos transformar OFFSET → NUMERO DA PAGINA
+         */
+        $page = ($length > 0) ? (int) floor($start / $length) + 1 : 1;
 
-        // Buscar os registros filtrados e com a paginação aplicada
-        $res = EntityEvento::getEvento($where, 'protocolo ASC', $obPagination->getLimit());
-        // Construir a lista de resultados
+        /**
+         * ------------------------------
+         *  TOTAL DE REGISTROS FILTRADOS
+         * ------------------------------
+         */
+        $quantidadetotal = EntityEvento::getEvento($where, null, null, 'COUNT(*) as qtd')
+            ->fetchObject()
+            ->qtd;
+
+        /**
+         * ------------------------------
+         *  BUSCAR OS ITENS DA PÁGINA
+         * ------------------------------
+         */
+        $pagination = new Pagination($quantidadetotal, $page, $length);
+
+        $res = EntityEvento::getEvento(
+            $where,
+            'protocolo ASC',
+            $pagination->getLimit()
+        );
+
+        /**
+         * ------------------------------
+         *  MONTAR RESULTADOS
+         * ------------------------------
+         */
+        $results = [];
+
         while ($obEvento = $res->fetchObject(EntityEvento::class)) {
             $results[] = [
                 'status' => str_replace(' ', '-', $obEvento->status),
@@ -116,23 +154,21 @@ class Ajax
             ];
         }
 
-        // Determinar se há mais registros
-        $hasMore = ($paginaAtual + 1) * $length < $quantidadetotal;
-
-        // Construir a resposta para DataTables
+        /**
+         * ------------------------------
+         *  MONTAR RESPOSTA DO DATATABLES
+         * ------------------------------
+         */
         $response = [
-            'draw' => $queryParams['draw'] ?? 1, // O valor de "draw" enviado no request
-            'recordsTotal' => $quantidadetotal,  // Total de registros sem filtro
-            'recordsFiltered' => $quantidadetotal, // Total de registros após filtro (pode ser ajustado se houver filtro)
-            'data' => $results,  // Dados da tabela
-            'pagination' => [
-                'more' => $hasMore
-            ]
+            'draw' => $draw,
+            'recordsTotal' => $quantidadetotal,
+            'recordsFiltered' => $quantidadetotal,
+            'data' => $results
         ];
 
-        // Retornar a resposta em formato JSON
         return json_encode($response);
     }
+
 
     /**
      * Método responsável por retornar os pontos de acesso selecionados de evento x
