@@ -18,7 +18,6 @@ function documentaChats()
         return false;
     }
 
-    $token = APIFortics::getToken();
     $mensagem = "A instabilidade na região foi resolvida e o acesso à internet já foi normalizado. Caso sua conexão ainda não tenha sido restabelecida, sugerimos que reinicie seu roteador. Se o problema persistir, entre em contato com nosso suporte para que possamos auxiliar.\n\nAgradecemos sua paciência e compreensão.";
 
     $batchSize = 20;
@@ -29,7 +28,7 @@ function documentaChats()
         $batch[] = $obFila;
 
         if (count($batch) === $batchSize) {
-            processBatch($batch, $token, $mensagem);
+            processBatch($batch, $mensagem);
             $batch = [];
             $mensagensEnviadas = true;
             sleep(2); // Pausa entre os batches
@@ -38,23 +37,22 @@ function documentaChats()
 
     // Processa o restante, se sobrar
     if (count($batch) > 0) {
-        processBatch($batch, $token, $mensagem);
+        processBatch($batch, $mensagem);
         $mensagensEnviadas = true;
     }
-
     return $mensagensEnviadas;
 }
 
-function processBatch(array $batch, string $token, string $mensagem)
+function processBatch(array $batch, string $mensagem)
 {
     $multiHandle = curl_multi_init();
     $curlHandles = [];
 
     foreach ($batch as $item) {
-        APIFortics::sendMessageAtt($item->numero, $mensagem, $multiHandle, $curlHandles, $token, null, true);
+        APIFortics::sendMessageAtt($item->numero, $item->protocolo_sz, $mensagem, $multiHandle, $curlHandles, null, true);
 
         // Marca como enviado após agendar o envio
-        $item->enviado = 1;
+        //$item->enviado = 1;
         $item->atualizar(); // Crie esse método no EntityFila se não existir
     }
 

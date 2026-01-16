@@ -74,13 +74,29 @@ class APIFortics
         ]);
 
         $response = curl_exec($ch);
-        curl_close($ch);
 
         $responseData = json_decode($response, true);
         return $responseData['data'][0]['_id'] ?? 'ID não encontrado';
     }
-    // APIFortics::sendMessageAtt (atualizada)
-    public static function sendMessageAtt($numero, $message, &$multiHandle, &$curlHandles, $token, $imagemCaminho = null, $end = false)
+    private static function getChannelId($protocolo)
+    {
+        $instance = new self();
+        $url = $instance->url . '/attendances?protocol=' . urlencode($protocolo);
+        $token = self::getToken();
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Authorization: Bearer $token"
+        ]);
+
+        $response = curl_exec($ch);
+
+        $responseData = json_decode($response, true);
+        return $responseData['data'][0]['channel_id'] ?? null;
+    }
+    public static function sendMessageAtt($numero, $protocolo, $message, &$multiHandle, &$curlHandles, $imagemCaminho = null, $end = false)
     {
         $instance = new self();
         $close_session = 0;
@@ -90,9 +106,10 @@ class APIFortics
 
         $data = [
             "platform_id" => $numero,
-            "channel_id" => $instance->channel,
+            "channel_id" => self::getChannelId($protocolo),
             "close_session" => $close_session,
         ];
+
 
         if (!empty($imagemCaminho) && file_exists($imagemCaminho)) {
             // Se houver imagem, envia como media
@@ -115,8 +132,7 @@ class APIFortics
             CURLOPT_POST => true,
             CURLOPT_HTTPHEADER => [
                 'Content-Type: application/json',
-                'User-Agent: APIElite/1.0',
-                'Authorization: Bearer ' . $token
+                'Authorization: Bearer ' . self::getToken()
             ],
             CURLOPT_POSTFIELDS => json_encode($data)
         ]);
@@ -124,8 +140,6 @@ class APIFortics
         curl_multi_add_handle($multiHandle, $ch);
         $curlHandles[] = $ch;
     }
-
-
 
     // Nova função para executar todas as requisições
     public static function executeBatchRequests(&$multiHandle, &$curlHandles)

@@ -205,6 +205,7 @@ class Massiva extends Page
                 if ($deveEnviar) {
                     APIFortics::sendMessageAtt(
                         $obMassiva->numero,
+                        $obMassiva->protocolo_sz,
                         $mensagem,
                         $multiHandle,
                         $curlHandles,

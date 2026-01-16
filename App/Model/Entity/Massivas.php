@@ -14,7 +14,6 @@ class Massivas
     public $id_massiva;
     public $cpf_cnpj;
     public $avisado;
-
     public function cadastrar()
     {
         $this->id = (new Database('massivas'))->insert([
