@@ -132,7 +132,8 @@ class Api
                 $massiva = $obCidade->massiva == 1 ? true : false;
 
                 $data = [
-                    'massiva' => $massiva
+                    'massiva' => $massiva,
+                    'id_massiva' => $obCidade->id_massiva
                 ];
 
             } else {
@@ -171,8 +172,8 @@ class Api
             $obMassiva->protocolo_sz = $protocolo;
             $obMassiva->numero = $numero;
             $obMassiva->codsercli = $codsercli;
-            $obMassiva->id_massiva = $id_massiva;
             $obMassiva->cpf_cnpj = $cpf_cnpj;
+            $obMassiva->id_massiva = $id_massiva;
             $obMassiva->cadastrar();
 
             $data = [

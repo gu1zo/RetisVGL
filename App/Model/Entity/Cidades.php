@@ -8,6 +8,7 @@ class Cidades
     public $id;
     public $nome;
     public $massiva;
+    public $id_massiva;
 
     public static function getCidades($where = null, $order = null, $limit = null, $fields = '*', $group = null, $params = [])
     {
@@ -32,6 +33,7 @@ class Cidades
     {
         $this->id = (new Database('cidades'))->insert([
             'nome' => $this->nome,
+            'id_massiva' => $this->id_massiva,
             'massiva' => $this->massiva
         ]);
 
@@ -42,6 +44,7 @@ class Cidades
     {
         return (new Database('cidades'))->update('id = ' . $this->id, [
             'nome' => $this->nome,
+            'id_massiva' => $this->id_massiva,
             'massiva' => $this->massiva
         ]);
     }

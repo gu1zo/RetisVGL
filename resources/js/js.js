@@ -269,7 +269,7 @@ $(document).ready(function () {
       language: {
           url: "/resources/json/datatable-pt-br.json"
       },
-      order: [[2, 'dsc']],
+      order: [[3, 'dsc']],
       columnDefs: [{ width: "8px", targets: 0 }],
       createdRow: function (row, data, dataIndex) {
           const status = data.status;

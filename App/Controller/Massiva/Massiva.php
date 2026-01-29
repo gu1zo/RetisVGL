@@ -28,11 +28,17 @@ class Massiva extends Page
         $postVars = $request->getPostVars();
         $cidades = $postVars['massiva'] ?? [];
         $results = EntityCidades::getCidades();
+        $id = date('ydis');
 
         while ($obCidades = $results->fetchObject(EntityCidades::class)) {
-            $obCidades->massiva = 0;
             if (in_array($obCidades->id, $cidades)) {
                 $obCidades->massiva = 1;
+                if ($obCidades->id_massiva == 0) {
+                    $obCidades->id_massiva = $id;
+                }
+            } else {
+                $obCidades->massiva = 0;
+                $obCidades->id_massiva = 0;
             }
             $obCidades->atualizar();
         }
@@ -50,7 +56,8 @@ class Massiva extends Page
             $item .= View::render('/cidades/item', [
                 'nome' => $obCidade->nome,
                 'id' => $obCidade->id,
-                'massiva' => $massiva
+                'massiva' => $massiva,
+                'id_massiva' => $obCidade->id_massiva
             ]);
         }
         return $item;
