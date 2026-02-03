@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
   <head>
     <style>
@@ -87,7 +87,14 @@
               border-top: 1px solid #ddd;
             "
           >
-            <small>© 2025 - Desenvolvido por Vogel</small>
+            <div class="text-center text-muted">
+              &copy; <span id="year"></span> - Desenvolvido por Vogel
+            </div>
+
+            <script>
+              document.getElementById("year").textContent =
+                new Date().getFullYear();
+            </script>
           </div>
         </div>
       </div>
