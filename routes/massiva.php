@@ -6,7 +6,8 @@ use \App\http\Response;
 //ROTA HOME
 $obRouter->get('/cidades', [
     'middlewares' => [
-        'required-login'
+        'required-login',
+        'required-admin'
     ],
     function ($request) {
         return new Response(200, Massiva::getCidades($request));
@@ -15,7 +16,8 @@ $obRouter->get('/cidades', [
 
 $obRouter->post('/cidades', [
     'middlewares' => [
-        'required-login'
+        'required-login',
+        'required-admin'
     ],
     function ($request) {
         return new Response(200, Massiva::setCidades($request));
@@ -24,7 +26,8 @@ $obRouter->post('/cidades', [
 
 $obRouter->get('/massiva', [
     'middlewares' => [
-        'required-login'
+        'required-login',
+        'required-admin'
     ],
     function ($request) {
         return new Response(200, Massiva::getAfetados($request));
@@ -33,7 +36,8 @@ $obRouter->get('/massiva', [
 
 $obRouter->get('/massiva/documentar', [
     'middlewares' => [
-        'required-login'
+        'required-login',
+        'required-admin'
     ],
     function ($request) {
         return new Response(200, Massiva::documentaChats($request));
@@ -42,7 +46,8 @@ $obRouter->get('/massiva/documentar', [
 
 $obRouter->post('/massiva/atualizar', [
     'middlewares' => [
-        'required-login'
+        'required-login',
+        'required-admin'
     ],
     function ($request) {
         return new Response(200, Massiva::atualizaChats($request));
@@ -51,7 +56,8 @@ $obRouter->post('/massiva/atualizar', [
 
 $obRouter->post('/massiva/finalizar', [
     'middlewares' => [
-        'required-login'
+        'required-login',
+        'required-admin'
     ],
     function ($request) {
         return new Response(200, Massiva::finalizaChats($request));
@@ -61,7 +67,8 @@ $obRouter->post('/massiva/finalizar', [
 
 $obRouter->get('/massiva/delete', [
     'middlewares' => [
-        'required-login'
+        'required-login',
+        'required-admin'
     ],
     function ($request) {
         return new Response(200, Massiva::getDeleteAfetado($request));
@@ -70,7 +77,8 @@ $obRouter->get('/massiva/delete', [
 
 $obRouter->post('/massiva/delete', [
     'middlewares' => [
-        'required-login'
+        'required-login',
+        'required-admin'
     ],
     function ($request) {
         return new Response(200, Massiva::setDeleteAfetado($request));
