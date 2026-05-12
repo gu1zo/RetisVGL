@@ -32,6 +32,7 @@ function syncbanco()
         $obCidade = new EntityCidades;
         $obCidade->nome = $cidade;
         $obCidade->massiva = 0;
+        $obCidade->id_massiva = 0;
         $obCidade->cadastrar();
     }
 
