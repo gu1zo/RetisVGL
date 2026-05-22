@@ -52,7 +52,7 @@ function processBatch(array $batch, string $mensagem)
         APIFortics::sendMessageAtt($item->numero, $item->protocolo_sz, $mensagem, $multiHandle, $curlHandles, $token, null, true);
 
         // Marca como enviado após agendar o envio
-        //$item->enviado = 1;
+        $item->enviado = 1;
         $item->atualizar(); // Crie esse método no EntityFila se não existir
     }
 
