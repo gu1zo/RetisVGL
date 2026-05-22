@@ -34,6 +34,10 @@ function documentaChats()
             sleep(2); // Pausa entre os batches
         }
     }
+    if (count($batch) > 0) {
+        processBatch($batch, $mensagem);
+        $mensagensEnviadas = true;
+    }
     return $mensagensEnviadas;
 }
 
