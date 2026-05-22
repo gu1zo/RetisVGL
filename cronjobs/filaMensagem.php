@@ -34,12 +34,6 @@ function documentaChats()
             sleep(2); // Pausa entre os batches
         }
     }
-
-    // Processa o restante, se sobrar
-    if (count($batch) > 0) {
-        processBatch($batch, $mensagem);
-        $mensagensEnviadas = true;
-    }
     return $mensagensEnviadas;
 }
 
