@@ -9,7 +9,7 @@ class Massivas
     public $id;
     public $nome;
     public $codsercli;
-    public $protocolo_sz;
+    public $protocolo_sz = null;
     public $numero;
     public $id_massiva;
     public $cpf_cnpj;

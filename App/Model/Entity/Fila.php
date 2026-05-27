@@ -32,7 +32,7 @@ class Fila
         return (new Database('fila'))->select($where, $order, $limit, $fields, $group, $params);
     }
 
-    public static function getMassivasMensagem($enviado)
+    public static function getMassivasMensagem()
     {
         return self::getMassivas('enviado = 0');
     }

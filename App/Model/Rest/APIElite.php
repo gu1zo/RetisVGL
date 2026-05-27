@@ -101,6 +101,12 @@ class APIElite
     {
         $instance = new self();
 
+        if ($protocolo != null) {
+            $descrioco = "Atendimento pelo SZ.CHAT - Protocolo: " . $protocolo . " - Nome: " . $nome . " - Telefone: " . $numero;
+        } else {
+            $descrioco = "Atendimento URA - Nome: " . $nome . " - Telefone: " . $numero;
+        }
+
         $dataDeHoje = date("Y-m-d"); // Formato: YYYY-MM-DD
         $horario = date("H:i:s");
 
@@ -125,7 +131,7 @@ class APIElite
                     "end-date" => $dataDeHoje,
                     "codusu" => $instance->codusu,
                     "codcar" => $instance->codcar,
-                    "descri_oco" => "Atendimento pelo SZ.CHAT - Protocolo: " . $protocolo . " - Nome: " . $nome . " - Telefone: " . $numero
+                    "descri_oco" => $descrioco
                 ]
             ]
         ];
@@ -188,7 +194,6 @@ class APIElite
         ];
 
         $response = $instance->makeRequest($data);
-
         return $response[0]['codcli'];
     }
 

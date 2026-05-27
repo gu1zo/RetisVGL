@@ -99,10 +99,11 @@ class Massiva extends Page
         $results = EntityMassiva::getMassivas(null, 'id ASC');
         while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
             $id_massiva = is_null($obMassiva->id_massiva) ? 0 : $obMassiva->id_massiva;
+            $protocolo = is_null($obMassiva->protocolo_sz) ? 'ATENDIMENTO URA' : $obMassiva->protocolo_sz;
             $itens .= View::render('/massiva/item', [
                 'id' => $obMassiva->id,
                 'nome' => $obMassiva->nome,
-                'protocolo' => $obMassiva->protocolo_sz,
+                'protocolo' => $protocolo,
                 'numero' => $obMassiva->numero,
                 'id_massiva' => $id_massiva
             ]);
@@ -124,6 +125,11 @@ class Massiva extends Page
             $obFila->cpf_cnpj = $obMassiva->cpf_cnpj;
             $obFila->cadastrar();
 
+            if ($obFila->protocolo_sz == null) {
+                $obFila->enviado = 1;
+                $obFila->atualizar();
+            }
+
             $obMassiva->excluir();
         }
         $request->getRouter()->redirect('/massiva?status=documented');
@@ -142,6 +148,11 @@ class Massiva extends Page
             $obFila->numero = $obMassiva->numero;
             $obFila->cpf_cnpj = $obMassiva->cpf_cnpj;
             $obFila->cadastrar();
+
+            if ($obFila->protocolo_sz == null) {
+                $obFila->enviado = 1;
+                $obFila->atualizar();
+            }
 
             $obMassiva->excluir();
         }
@@ -208,20 +219,21 @@ class Massiva extends Page
             $results = EntityMassiva::getMassivasByIdMassiva($k);
             while ($obMassiva = $results->fetchObject(EntityMassiva::class)) {
                 $deveEnviar = $todos || $obMassiva->avisado == 0;
+                if ($obMassiva->protocolo_sz != null) {
+                    if ($deveEnviar) {
+                        APIFortics::sendMessageAtt(
+                            $obMassiva->numero,
+                            $obMassiva->protocolo_sz,
+                            $mensagem,
+                            $multiHandle,
+                            $curlHandles,
+                            $token,
+                            $imagemCaminho // pode ser null
+                        );
 
-                if ($deveEnviar) {
-                    APIFortics::sendMessageAtt(
-                        $obMassiva->numero,
-                        $obMassiva->protocolo_sz,
-                        $mensagem,
-                        $multiHandle,
-                        $curlHandles,
-                        $token,
-                        $imagemCaminho // pode ser null
-                    );
-
-                    $obMassiva->avisado = 1;
-                    $obMassiva->atualizar();
+                        $obMassiva->avisado = 1;
+                        $obMassiva->atualizar();
+                    }
                 }
             }
         }

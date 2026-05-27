@@ -37,6 +37,15 @@ $obRouter->post('/api/v1/setAfetado', [
     }
 ]);
 
+$obRouter->post('/api/v1/setAfetadoURA', [
+    'middlewares' => [
+        'api'
+    ],
+    function ($request) {
+        return new Response(200, Api\Api::setAfetadoURA($request), 'application/json');
+    }
+]);
+
 $obRouter->post('/api/v1/coordenadas', [
     'middlewares' => [
         'api'

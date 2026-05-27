@@ -189,6 +189,44 @@ class Api
         return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
+    public static function setAfetadoURA($request)
+    {
+        $postVars = $request->getPostVars();
+        try {
+            $nome = $postVars['nome'] ?? throw new Exception('Nome não definido');
+            $numero = $postVars['numero'] ?? throw new Exception('Número não definido');
+            $codsercli = $postVars['codsercli'] ?? throw new Exception('Número não definido');
+            $id_massiva = $postVars['id_massiva'] == 0 ? 0 : $postVars['id_massiva'];
+            $cpf_cnpj = $postVars['cpf_cnpj'] ?? throw new Exception('Documento não definido');
+
+            $obMassiva = EntityMassiva::getMassivaByNumber($numero);
+
+            if ($obMassiva instanceof EntityMassiva) {
+                throw new Exception("Afetado já cadastrado");
+            }
+
+            $obMassiva = new EntityMassiva;
+
+            $obMassiva->nome = $nome;
+            $obMassiva->numero = $numero;
+            $obMassiva->codsercli = $codsercli;
+            $obMassiva->cpf_cnpj = $cpf_cnpj;
+            $obMassiva->id_massiva = $id_massiva;
+            $obMassiva->cadastrar();
+
+            $data = [
+                'error' => false,
+                'message' => "Cadastrado com sucesso"
+            ];
+        } catch (Exception $e) {
+            $data = [
+                'error' => true,
+                'message' => $e->getMessage()
+            ];
+        }
+        return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+
     public static function getCoordenadasByPonto($request)
     {
         $postVars = $request->getPostVars();
