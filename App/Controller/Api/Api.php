@@ -6,6 +6,7 @@ use App\http\Request;
 use WilliamCosta\DatabaseManager\Pagination;
 use App\Controller\Evento\Evento;
 use App\Model\Entity\Massivas as EntityMassiva;
+use App\Model\Entity\AfetadoUra as EntityAfetado;
 use App\Model\Entity\PontoAcesso as EntityPontoAcesso;
 use App\Model\Entity\LogsCallback as EntityLogs;
 use App\Model\Entity\Joins as EntityJoins;
@@ -213,6 +214,36 @@ class Api
             $obMassiva->cpf_cnpj = $cpf_cnpj;
             $obMassiva->id_massiva = $id_massiva;
             $obMassiva->cadastrar();
+
+            $data = [
+                'error' => false,
+                'message' => "Cadastrado com sucesso"
+            ];
+        } catch (Exception $e) {
+            $data = [
+                'error' => true,
+                'message' => $e->getMessage()
+            ];
+        }
+        return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+
+    public static function setAfetadoSimplesURA($request)
+    {
+        $postVars = $request->getPostVars();
+        try {
+            $nome = $postVars['nome'] ?? throw new Exception('Nome não definido');
+            $numero = $postVars['numero'] ?? throw new Exception('Número não definido');
+            $cpf_cnpj = $postVars['cpf_cnpj'] ?? throw new Exception('Documento não definido');
+            $datetime = $data = new DateTime('America/Sao_Paulo');
+
+            $obAfetado = new EntityAfetado;
+
+            $obAfetado->nome = $nome;
+            $obAfetado->numero = $numero;
+            $obAfetado->cpf_cnpj = $cpf_cnpj;
+            $obAfetado->data = $datetime->format('Y-m-d H:i');
+            $obAfetado->cadastrar();
 
             $data = [
                 'error' => false,
